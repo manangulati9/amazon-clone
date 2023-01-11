@@ -10,7 +10,7 @@ export default function () {
           See More
         </Link>
       </div>
-      <div className="flex gap-5">
+      <div className="flex gap-5 flex-wrap">
         <div className="flex flex-col gap-2 flex-1 justify-center items-center">
           <Image
             src="https://source.unsplash.com/220x220/?clothes"

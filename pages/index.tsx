@@ -15,7 +15,7 @@ export default function Home() {
       </Head>
       <Script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js" />
       <Carousel />
-      <main className="flex flex-1 flex-col  items-center mt-64 mb-4 bg-gray-200">
+      <main className="flex flex-1 flex-col items-center xl:mt-64 mb-4 mt-20 sm:mt-32 md:mt-52 bg-gray-200">
         <CardGroup />
         <TodaysDeals />
         <CardGroup />

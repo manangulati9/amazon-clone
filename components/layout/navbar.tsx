@@ -31,13 +31,13 @@ function Logo_Address() {
           <Image src={amazonLogo} className="h-8 w-auto" alt="amzn_logo" />
         </Link>
       </div>
-      <div className="flex hover:outline outline-1 rounded-[2px] px-1">
+      <button className="text-left flex hover:outline outline-1 rounded-[2px] px-1">
         <BiMap className="text-xl mt-4" />
         <div className="flex flex-col h-fit  py-1 px-1">
           <div className="text-xs">Hello</div>
           <div className="font-emberBd text-sm">Select Your Address</div>
         </div>
-      </div>
+      </button>
     </div>
   );
 }
@@ -189,43 +189,45 @@ function Searchbar() {
 
 function SignIn_Cart() {
   return (
-    <div className="flex justify-between h-fit gap-5 lg:pt-0">
+    <div className="flex justify-around h-fit gap-5 lg:pt-0 items-center">
       <Tooltip
         content={<LanguageSelectModal />}
         placement="bottom"
         style="light"
       >
-        <div className="flex gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2">
+        <button className="gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2 min-[450px]:flex hidden">
           <Image src={indiaFlag} alt="flag" className="w-auto h-3 " />
           <div className="flex gap-1 font-emberBd text-sm">
             EN
             <HiChevronDown className="mt-1" />
           </div>
-        </div>
+        </button>
       </Tooltip>
       <Tooltip content={<SignInModal />} placement="bottom" style="light">
-        <div className="flex flex-col hover:outline outline-1 rounded-[2px] py-1 px-2">
+        <button className="flex flex-col text-left hover:outline outline-1 rounded-[2px] py-1 px-2">
           <div className="text-xs">Hello, sign in</div>
           <div className=" flex gap-1 font-emberBd text-sm">
             Account & Lists <HiChevronDown className="mt-1" />
           </div>
-        </div>
+        </button>
       </Tooltip>
-      <div className="flex flex-col hover:outline outline-1 rounded-[2px] py-1 px-2">
+      <button className="flex flex-col hover:outline text-left outline-1 rounded-[2px] py-1 px-2">
         <div className="text-xs">Returns</div>
         <div className="font-emberBd text-sm">& Orders</div>
-      </div>
-      <div className="flex gap-2 hover:outline outline-1 rounded-[2px] py-1 px-2">
-        <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
+      </button>
+      <button className="flex gap-2 hover:outline outline-1 rounded-[2px] py-1 px-2">
+        <div>
+          <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
+        </div>
         <div className="font-emberBd text-sm h-fit self-end">Cart</div>
-      </div>
+      </button>
     </div>
   );
 }
 
 function Nav2() {
   return (
-    <nav className="md:flex justify-around bg-[#232f3e] text-white px-3 py-1 hidden">
+    <nav className="md:flex justify-around bg-[#232f3e] text-white px-3 py-1 hidden text-wrap">
       <button className="hover:outline outline-1 rounded-[2px] flex gap-2 items-center px-2">
         <div className="flex flex-col gap-1">
           <hr className="bg-white w-4 h-[0.1rem]" />
@@ -332,14 +334,14 @@ function SignInModal() {
   return (
     <div className="flex flex-col gap-2 text-emberRg text-xs w-[28rem] text-black p-2">
       <div className="flex flex-col justify-center items-center gap-2 ">
-        <Link href="/login/sign_in">
+        <Link href="/user/login">
           <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
             Sign in
           </button>
         </Link>
         <p>
           New Customer?{" "}
-          <Link href="/login/sign_up" className="text-blue-600 hover:underline">
+          <Link href="/user/sign-up" className="text-blue-600 hover:underline">
             Start here
           </Link>
         </p>

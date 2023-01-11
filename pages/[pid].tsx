@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 
 export default function () {
@@ -120,9 +119,9 @@ function ProductDetails() {
               </svg>
             </li>
           </ul>
-          <Link href="" className="text-blue-500 hover:underline">
+          <button className="text-blue-500 hover:underline">
             28,039 ratings
-          </Link>
+          </button>
         </div>
       </div>
       <hr className="border bg-slate-500 my-2.5" />
@@ -173,9 +172,9 @@ function Buybox() {
   return (
     <div className="p-6 flex flex-col gap-6 rounded border border-gray-400 text-sm h-fit shadow-lg">
       <div className="flex flex-col gap-2">
-        <Link href="" className="text-blue-600 hover:underline">
+        <button className="text-blue-600 hover:underline text-left">
           FREE DELIVERY
-        </Link>
+        </button>
         <p className="font-emberBd">Thursday, 12 January.</p>
       </div>
       <p>

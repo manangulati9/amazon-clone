@@ -37,30 +37,32 @@ export default function () {
             <Image src={img6} className="block w-full" alt="..." />
           </div>
         </div>
-        <button
-          className="carousel-control-prev absolute top-0 bottom-0 flex items-center justify-center p-0 text-center border-0 hover:no-underline right-0 w-20 focus:outline outline-[3px] outline-white rounded h-60 mt-1 mx-1 left-0"
-          type="button"
-          data-bs-target="#carouselExampleControls"
-          data-bs-slide="prev"
-        >
-          <span
-            className="carousel-control-prev-icon inline-block bg-no-repeat"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button
-          className="carousel-control-next absolute top-0 bottom-0 flex items-center justify-center p-0 text-center border-0 hover:no-underline right-0 w-20 focus:outline outline-[3px] outline-white rounded h-60 mt-1 mx-1"
-          type="button"
-          data-bs-target="#carouselExampleControls"
-          data-bs-slide="next"
-        >
-          <span
-            className="carousel-control-next-icon inline-block bg-no-repeat"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Next</span>
-        </button>
+        <div className="flex justify-between xl:-inset-y-[38rem] sm:-inset-y-[22rem] -inset-y-32 relative">
+          <button
+            className="carousel-control-prev  top-0 flex items-center justify-center p-0 text-center border-0 hover:no-underline right-0 w-20 focus:outline outline-[3px] outline-white rounded lg:h-60 h-10 sm:h-30 md:h-40 mt-1 mx-1 left-0"
+            type="button"
+            data-bs-target="#carouselExampleControls"
+            data-bs-slide="prev"
+          >
+            <span
+              className="carousel-control-prev-icon inline-block bg-no-repeat"
+              aria-hidden="true"
+            ></span>
+            <span className="visually-hidden">Previous</span>
+          </button>
+          <button
+            className="carousel-control-next  top-0 flex items-center justify-center p-0 text-center border-0 hover:no-underline right-0 w-20 focus:outline outline-[3px] outline-white rounded lg:h-60 h-10 sm:h-30 md:h-40 mt-1 mx-1"
+            type="button"
+            data-bs-target="#carouselExampleControls"
+            data-bs-slide="next"
+          >
+            <span
+              className="carousel-control-next-icon inline-block bg-no-repeat"
+              aria-hidden="true"
+            ></span>
+            <span className="visually-hidden">Next</span>
+          </button>
+        </div>
       </div>
     </>
   );

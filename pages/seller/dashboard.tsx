@@ -22,7 +22,7 @@ export default function () {
   return (
     <div>
       <SellerNavbar />
-      <div className="flex gap-4">
+      <div className="flex gap-4 mt-3 pl-3 pr-7 overflow-auto">
         <SellerSidebar />
         <ProductTable />
       </div>
@@ -67,13 +67,13 @@ function SellerNavbar() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link href="/navbars" active={true}>
+        <Navbar.Link href="/seller/dashboard" active={true}>
           Home
         </Navbar.Link>
-        <Navbar.Link href="/navbars">About</Navbar.Link>
-        <Navbar.Link href="/navbars">Services</Navbar.Link>
-        <Navbar.Link href="/navbars">Pricing</Navbar.Link>
-        <Navbar.Link href="/navbars">Contact</Navbar.Link>
+        <Navbar.Link href="/seller/dashboard">About</Navbar.Link>
+        <Navbar.Link href="/seller/dashboard">Services</Navbar.Link>
+        <Navbar.Link href="/seller/dashboard">Pricing</Navbar.Link>
+        <Navbar.Link href="/seller/dashboard">Contact</Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
   );
@@ -81,7 +81,7 @@ function SellerNavbar() {
 
 function SellerSidebar() {
   return (
-    <div className="w-fit">
+    <div className="w-fit rounded-lg shadow-lg flex flex-col">
       <Sidebar aria-label="Default sidebar example">
         <Sidebar.Items>
           <Sidebar.ItemGroup>
@@ -120,8 +120,8 @@ function SellerSidebar() {
 
 function ProductTable() {
   return (
-    <div className="flex flex-col gap-6">
-      <Table hoverable={true}>
+    <div className="flex flex-col gap-12 w-full">
+      <Table hoverable={true} className="overflow-auto">
         <Table.Head>
           <Table.HeadCell className="!p-4">
             <Checkbox />
@@ -192,11 +192,11 @@ function ProductTable() {
           </Table.Row>
         </Table.Body>
       </Table>
-      <div className="flex w-full gap-2 items-center justify-center ">
-        <button className="rounded-2xl text-black bg-[#ffa41c] hover:bg-[#fa8900]   py-2 px-8 shadow-md">
+      <div className="flex w-full gap-7 items-center justify-center text-white ">
+        <button className="rounded-2xl  bg-red-600 hover:bg-red-500 py-2 px-8 shadow-md">
           Delete
         </button>
-        <button className="rounded-2xl text-black bg-[#ffa41c] hover:bg-[#fa8900]   py-2 px-8 shadow-md">
+        <button className="rounded-2xl  bg-green-600 hover:bg-green-500 py-2 px-8 shadow-md">
           Save changes
         </button>
       </div>
