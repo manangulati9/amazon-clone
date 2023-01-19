@@ -11,67 +11,31 @@ export default function () {
         </Link>
       </div>
       <div className="flex gap-5 flex-wrap">
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
-        <div className="flex flex-col gap-2 flex-1 justify-center items-center">
-          <Image
-            src="https://source.unsplash.com/220x220/?clothes"
-            alt="product_img"
-            width={220}
-            height={220}
-            className="rounded-sm"
-          />
-          <p>Clothing</p>
-        </div>
+        <CardItem />
+        <CardItem />
+        <CardItem />
+        <CardItem />
+        <CardItem />
+        <CardItem />
       </div>
     </div>
+  );
+}
+
+function CardItem({}) {
+  return (
+    <Link
+      href=""
+      className="flex flex-col gap-2 flex-1 justify-center items-center"
+    >
+      <Image
+        src="https://source.unsplash.com/220x220/?clothes"
+        alt="product_img"
+        width={220}
+        height={220}
+        className="rounded-sm"
+      />
+      <p className="text-left w-full">Clothing</p>
+    </Link>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import amazonLogo from "../../public/assets/navbar/amazon_logo.png";
 import indiaFlag from "../../public/assets/navbar/Flag_of_India.png";
@@ -8,10 +8,11 @@ import Link from "next/link";
 import { Tooltip } from "flowbite-react";
 import { HiChevronDown } from "react-icons/hi";
 import { BiMap } from "react-icons/bi";
-
+import { User, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, db } from "../../firebase/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 export default function Navbar() {
   return (
-    // TODO: Search filter implementation and make its sizing dynamic
     <>
       <nav className="lg:flex bg-amznDarkBlue text-white gap-2 justify-around items-center p-2">
         <Logo_Address />
@@ -188,6 +189,13 @@ function Searchbar() {
 }
 
 function SignIn_Cart() {
+  const [user, setuser] = useState("");
+  const [usrType, setusrType] = useState("");
+  onAuthStateChanged(auth, async (user) => {
+    const usrData = await handleAuthChange(user);
+    setuser(usrData ? usrData.firstName : "");
+    setusrType(usrData ? usrData.usertype : "");
+  });
   return (
     <div className="flex justify-around h-fit gap-5 lg:pt-0 items-center">
       <Tooltip
@@ -203,9 +211,15 @@ function SignIn_Cart() {
           </div>
         </button>
       </Tooltip>
-      <Tooltip content={<SignInModal />} placement="bottom" style="light">
+      <Tooltip
+        content={<SignInModal usertype={usrType} />}
+        placement="bottom"
+        style="light"
+      >
         <button className="flex flex-col text-left hover:outline outline-1 rounded-[2px] py-1 px-2">
-          <div className="text-xs">Hello, sign in</div>
+          <div className="text-xs">{`Hello, ${
+            user ? user.charAt(0).toUpperCase() + user.slice(1) : "Sign in"
+          }`}</div>
           <div className=" flex gap-1 font-emberBd text-sm">
             Account & Lists <HiChevronDown className="mt-1" />
           </div>
@@ -215,12 +229,15 @@ function SignIn_Cart() {
         <div className="text-xs">Returns</div>
         <div className="font-emberBd text-sm">& Orders</div>
       </button>
-      <button className="flex gap-2 hover:outline outline-1 rounded-[2px] py-1 px-2">
+      <Link
+        href="/cart"
+        className="flex gap-2 hover:outline outline-1 rounded-[2px] py-1 px-2"
+      >
         <div>
           <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
         </div>
         <div className="font-emberBd text-sm h-fit self-end">Cart</div>
-      </button>
+      </Link>
     </div>
   );
 }
@@ -330,21 +347,49 @@ function Nav2() {
   );
 }
 
-function SignInModal() {
+function SignInModal({ usertype }: { usertype: string }) {
   return (
     <div className="flex flex-col gap-2 text-emberRg text-xs w-[28rem] text-black p-2">
       <div className="flex flex-col justify-center items-center gap-2 ">
-        <Link href="/user/login">
-          <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
-            Sign in
+        {auth.currentUser === null ? (
+          <div className="flex flex-col gap-2 items-center justify-center">
+            <div className="flex items-center justify-center gap-3">
+              <Link href="/user/login">
+                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
+                  Sign in as customer
+                </button>
+              </Link>
+              <Link href="/seller/login">
+                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
+                  Sign in as seller
+                </button>
+              </Link>
+            </div>
+            <p>
+              New Customer?{" "}
+              <Link
+                href="/user/sign-up"
+                className="text-blue-600 hover:underline"
+              >
+                Start here
+              </Link>
+            </p>
+          </div>
+        ) : (
+          <button
+            onClick={async () => {
+              try {
+                await signOut(auth);
+              } catch (error) {
+                alert("An error has occured");
+                console.log(error);
+              }
+            }}
+            className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm"
+          >
+            Sign out
           </button>
-        </Link>
-        <p>
-          New Customer?{" "}
-          <Link href="/user/sign-up" className="text-blue-600 hover:underline">
-            Start here
-          </Link>
-        </p>
+        )}
       </div>
       <div className="bg-gray-400 border"></div>
       <div className="flex justify-around gap-5">
@@ -439,13 +484,13 @@ function SignInModal() {
             Your Amazon Business Account
           </Link>
           <Link
-            href="/login/seller"
+            href="/seller/dashboard"
             className="block text-xs hover:underline hover:text-amznOrange-100"
           >
             Your Seller Account
           </Link>
           <Link
-            href=""
+            href={usertype === "seller" ? "/seller/dashboard" : "/seller/login"}
             className="block text-xs hover:underline hover:text-amznOrange-100"
           >
             Manage Your Content and
@@ -514,4 +559,16 @@ function LanguageSelectModal() {
       </div>
     </div>
   );
+}
+
+async function handleAuthChange(user: User | null) {
+  if (user) {
+    const uid = user.uid;
+    const userColRef = collection(db, "users");
+    const q = query(userColRef, where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs[0].data();
+  } else {
+    return null;
+  }
 }

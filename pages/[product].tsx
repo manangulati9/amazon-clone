@@ -1,12 +1,43 @@
 import Image from "next/image";
+import { CartItem, ProductInfo } from "../utils/interfaces";
+import { GetServerSideProps } from "next";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Toast } from "flowbite-react";
+import { HiCheck } from "react-icons/hi";
 
-export default function () {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const prodName = ctx.params!.product;
+  const productColRef = collection(db, "products");
+  const q = query(productColRef, where("name", "==", prodName));
+  const querySnap = await getDocs(q);
+  const data = querySnap.docs[0].data();
+  return {
+    props: {
+      data,
+    },
+  };
+};
+
+export default function (props: {
+  data: ProductInfo;
+  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
+  cartItems: CartItem[];
+}) {
+  const [toastShow, settoastShow] = useState(false);
   return (
     <div>
       <div className="flex gap-3 px-3 pb-5 pt-8">
         <ProductImage />
-        <ProductDetails />
-        <Buybox />
+        <ProductDetails prodData={props.data} />
+        <Buybox
+          prodData={props.data}
+          setcartItems={props.setcartItems}
+          cartItems={props.cartItems}
+          settoastShow={settoastShow}
+        />
+        <CartToast show={toastShow} />
       </div>
     </div>
   );
@@ -14,23 +45,25 @@ export default function () {
 
 function ProductImage() {
   return (
-    <div className="mr-5">
+    <div className="mr-5 grow-0">
       <Image
         src="https://source.unsplash.com/1000x1100/?smartphone"
         alt="..."
-        width={1000}
-        height={1100}
+        width={800}
+        height={1000}
         className="rounded"
       />
     </div>
   );
 }
 
-function ProductDetails() {
+function ProductDetails({ prodData }: { prodData: ProductInfo }) {
   return (
     <div>
       <div className="grid gap-2">
-        <h1 className="text-2xl font-emberBd">Product Name</h1>
+        <h1 className="text-2xl font-emberBd">
+          {prodData.name.replaceAll("-", " ")}
+        </h1>
         <div className="flex gap-5 items-center">
           <ul className="flex justify-center">
             <li>
@@ -126,9 +159,12 @@ function ProductDetails() {
       </div>
       <hr className="border bg-slate-500 my-2.5" />
       <div>
-        <p className="text-xl my-2 font-emberBd">Price</p>
+        <p className="text-2xl my-2">₹{prodData.price?.toLocaleString()}</p>
         <div className="flex gap-2 text-slate-600">
-          M.R.P: <p className="line-through">74,999</p>{" "}
+          M.R.P:{" "}
+          <p className="line-through">
+            {(prodData.price! + 20000).toLocaleString()}
+          </p>{" "}
         </div>
         <p>Inclusive of all taxes</p>
         <p> EMI starts at ₹1,672. No Cost EMI available</p>
@@ -137,38 +173,28 @@ function ProductDetails() {
       <div className="grid gap-2">
         <h2 className="font-emberBd">About this item</h2>
         <ul className="list-disc list-inside">
-          <li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quaerat
-            illum cum, corporis est similique eius repellat temporibus dolore
-            doloribus saepe, vitae omnis?
-          </li>
-          <li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quaerat
-            illum cum, corporis est similique eius repellat temporibus dolore
-            doloribus saepe, vitae omnis?
-          </li>
-          <li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quaerat
-            illum cum, corporis est similique eius repellat temporibus dolore
-            doloribus saepe, vitae omnis?
-          </li>
-          <li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quaerat
-            illum cum, corporis est similique eius repellat temporibus dolore
-            doloribus saepe, vitae omnis?
-          </li>
-          <li>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem quaerat
-            illum cum, corporis est similique eius repellat temporibus dolore
-            doloribus saepe, vitae omnis?
-          </li>
+          {prodData.about?.map((point) => {
+            return <li key={point}>{point}</li>;
+          })}
         </ul>
       </div>
     </div>
   );
 }
 
-function Buybox() {
+function Buybox({
+  prodData,
+  setcartItems,
+  cartItems,
+  settoastShow,
+}: {
+  prodData: ProductInfo;
+  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
+  cartItems: CartItem[];
+  settoastShow: Dispatch<SetStateAction<boolean>>;
+}) {
+  const quantityRef = useRef<any>(null);
+
   return (
     <div className="p-6 flex flex-col gap-6 rounded border border-gray-400 text-sm h-fit shadow-lg">
       <div className="flex flex-col gap-2">
@@ -184,21 +210,62 @@ function Buybox() {
       <p>Sold by SellerName and Fulfilled by Amazon</p>
       <div className="flex gap-3 items-center">
         <label htmlFor="quantity">Quantity</label>
-        <select name="quantity" className="rounded py-0 pl-2 pr-0">
-          <option value="1" className="font-emberRg">
+        <select
+          name="quantity"
+          className="rounded py-0 pl-2 pr-0"
+          ref={quantityRef}
+        >
+          <option value={1} className="font-emberRg">
             1
           </option>
-          <option value="2" className="font-emberRg">
+          <option value={2} className="font-emberRg">
             2
           </option>
         </select>
       </div>
-      <button className="rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] self-center w-full p-2 shadow-md">
+      <button
+        onClick={() => {
+          setcartItems([
+            ...cartItems,
+            {
+              name: prodData.name,
+              quantity: quantityRef.current!.value,
+              category: prodData.category,
+              price: prodData.price,
+            },
+          ]);
+          settoastShow(true);
+          setTimeout(() => {
+            settoastShow(false);
+          }, 2500);
+        }}
+        className="rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] self-center w-full p-2 shadow-md"
+      >
         Add to cart
       </button>
-      <button className="rounded-2xl bg-[#ffa41c] hover:bg-[#fa8900] self-center w-full p-2 shadow-md">
+      <button
+        onClick={() => {
+          alert(`Total amount: ${prodData.price}`);
+        }}
+        className="rounded-2xl bg-[#ffa41c] hover:bg-[#fa8900] self-center w-full p-2 shadow-md"
+      >
         Buy now
       </button>
     </div>
+  );
+}
+
+function CartToast({ show }: { show: boolean }) {
+  return (
+    <Toast
+      className={`absolute bg-green-500 w-fit rounded-full px-3 py-2 left-[45%] bottom-10 transition-opacity ${
+        show === false ? "opacity-0" : "opacity-100"
+      }`}
+    >
+      <div className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+        <HiCheck className="h-5 w-5" />
+      </div>
+      <div className="ml-3 text-sm font-normal text-white">Added to cart</div>
+    </Toast>
   );
 }

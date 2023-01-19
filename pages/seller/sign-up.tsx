@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SignUp } from "../../utils/functions";
 import { useRouter } from "next/router";
 import { useRef } from "react";
-// TODO: Add autologin func to handleSumbit func
+
 export default function () {
   const pwdRef = useRef<any>(null);
   const router = useRouter();
@@ -15,11 +15,11 @@ export default function () {
       </Link>
       <div className="flex flex-col gap-3 mt-3">
         <div className="border border-gray-400 px-4 py-3 flex flex-col gap-3 rounded shadow-xl">
-          <h1 className="text-2xl">Sign up</h1>
+          <h1 className="text-2xl">Create your seller account</h1>
           <form
             onSubmit={(e) => {
-              SignUp(e, "customer");
-              router.push("/");
+              SignUp(e, "seller");
+              router.push("/seller/dashboard");
             }}
             method="post"
             className="text-xs flex flex-col gap-2 mt-2"
@@ -58,7 +58,6 @@ export default function () {
             <label htmlFor="password" className="block font-emberBd">
               Password
             </label>
-
             <input
               type="password"
               name="password"

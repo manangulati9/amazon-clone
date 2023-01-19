@@ -1,8 +1,12 @@
 import Image from "next/image";
 import amznLogo from "../../public/assets/Amazon_logo.svg";
 import Link from "next/link";
-import { UserSignIn } from "../../utils/functions";
+import { SignIn } from "../../utils/functions";
+import { useRouter } from "next/router";
+import { useRef } from "react";
 export default function () {
+  const router = useRouter();
+  const pwdRef = useRef<any>(null);
   return (
     <div className="grid place-items-center py-4 gap-3 text-xs mt-8">
       <Link href="/">
@@ -13,12 +17,20 @@ export default function () {
           <h1 className="text-2xl">Sign in</h1>
           <form
             className="text-xs flex flex-col gap-2 mt-2"
-            onSubmit={(e) => UserSignIn(e)}
+            onSubmit={(e) => {
+              SignIn(e);
+              router.push("/");
+            }}
           >
             <label htmlFor="email" className="block font-emberBd ">
               Email
             </label>
-            <input type="email" name="email" className="rounded h-8 text-xs" />
+            <input
+              type="email"
+              name="email"
+              className="rounded h-8 text-xs"
+              required
+            />
             <label htmlFor="password" className="block font-emberBd">
               Password
             </label>
@@ -26,7 +38,25 @@ export default function () {
               type="password"
               name="password"
               className="rounded h-8 text-xs"
+              required
+              ref={pwdRef}
             />
+            <div className="flex gap-2">
+              <input
+                name="pwdshow"
+                type="checkbox"
+                className="rounded focus:outline-none"
+                onClick={() => {
+                  const x = pwdRef.current;
+                  if (x.type === "password") {
+                    x.type = "text";
+                  } else {
+                    x.type = "password";
+                  }
+                }}
+              />
+              <label htmlFor="pwdshow">Show password</label>
+            </div>
             <button
               className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm self-center mt-4"
               type="submit"
@@ -49,7 +79,7 @@ export default function () {
           <p className="shrink-0">New to Amazon?</p>
           <div className="bg-gray-500 border w-full"></div>
         </div>
-        <Link href="/login/sign_up">
+        <Link href="/user/sign-up">
           {" "}
           <button className="bg-gradient-to-t from-slate-200 to-slate-100 rounded hover:from-slate-300 hover:to-slate-200 py-1.5 text-sm self-center border border-gray-400 w-full">
             Create your account
