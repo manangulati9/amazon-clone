@@ -3,8 +3,25 @@ import Head from "next/head";
 import TodaysDeals from "../components/home/todaysDeals";
 import Carousel from "../components/home/carousel";
 import Script from "next/script";
+import { GetStaticProps } from "next";
+import { handleNavSearch } from "../utils/functions";
+import { ProductInfo } from "../utils/interfaces";
 
-export default function Home() {
+export const getStaticProps: GetStaticProps = async () => {
+  const smartphones = await handleNavSearch("smartphones");
+  const watches = await handleNavSearch("watches");
+  return {
+    props: {
+      smartphones,
+      watches,
+    },
+  };
+};
+
+export default function Home(props: {
+  smartphones: ProductInfo[];
+  watches: ProductInfo[];
+}) {
   return (
     <>
       <Head>
@@ -17,9 +34,9 @@ export default function Home() {
       <Carousel />
       <main className="flex flex-1 flex-col items-center xl:mt-64 mb-4 mt-20 sm:mt-32 md:mt-52 bg-gray-200">
         <CardGroup />
-        <TodaysDeals />
+        <TodaysDeals prods={props.smartphones.slice(0, 6)} />
         <CardGroup />
-        <TodaysDeals />
+        <TodaysDeals prods={props.watches.slice(0, 6)} />
       </main>
     </>
   );

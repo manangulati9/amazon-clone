@@ -1,7 +1,7 @@
 import Image from "next/image";
 import amznLogo from "../../public/assets/Amazon_logo.svg";
 import Link from "next/link";
-import { SignUp } from "../../utils/functions";
+import { signUp } from "../../utils/functions";
 import { useRouter } from "next/router";
 import { useRef } from "react";
 // TODO: Add autologin func to handleSumbit func
@@ -18,7 +18,7 @@ export default function () {
           <h1 className="text-2xl">Sign up</h1>
           <form
             onSubmit={(e) => {
-              SignUp(e, "customer");
+              signUp(e, "customer");
               router.push("/");
             }}
             method="post"

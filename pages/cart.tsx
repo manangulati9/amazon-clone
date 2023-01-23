@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { auth } from "../firebase/firebase";
 import Image from "next/image";
-import { CartItem } from "../utils/interfaces";
+import { ProductInfo } from "../utils/interfaces";
 import { Dispatch, SetStateAction, useState } from "react";
+import { toTitleCase } from "../utils/functions";
 export default function ({
   cartItems,
   setcartItems,
 }: {
-  cartItems: CartItem[];
-  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
+  cartItems: ProductInfo[];
+  setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
 }) {
   if (auth.currentUser == null)
     return (
@@ -38,8 +39,8 @@ function CartDetails({
   total,
   setTotal,
 }: {
-  cartItems: CartItem[];
-  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
+  cartItems: ProductInfo[];
+  setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
   total: number;
   setTotal: Dispatch<SetStateAction<number>>;
 }) {
@@ -85,17 +86,18 @@ function CartItem({
   cartItems,
   total,
 }: {
-  data: CartItem;
-  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
+  data: ProductInfo;
+  setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
   setTotal: Dispatch<SetStateAction<number>>;
-  cartItems: CartItem[];
+  cartItems: ProductInfo[];
   total: number;
 }) {
+  const imgUrl = data.imgUrl ? data.imgUrl : "";
   return (
     <div className="flex gap-3">
       <div className="mr-5 grow-0">
         <Image
-          src="https://source.unsplash.com/400x400/?smartphone"
+          src={imgUrl}
           alt="..."
           width={200}
           height={200}
@@ -104,7 +106,7 @@ function CartItem({
       </div>
       <div className="w-full flex flex-col justify-between">
         <div className="flex w-full text-xl items-center justify-between">
-          <h2>{data.name.replaceAll("-", " ")}</h2>
+          <h2>{toTitleCase(data.name)}</h2>
           <h3 className="font-emberBd">₹{data.price.toLocaleString()}</h3>
         </div>
         <div className="flex flex-col gap-2 text-xs w-fit my-4">
@@ -158,11 +160,11 @@ function PaymentBox({
   cartItems,
 }: {
   total: number;
-  cartItems: CartItem[];
+  cartItems: ProductInfo[];
 }) {
   return (
-    <div className="bg-white rounded p-4 min-w-fit">
-      <div className="grid h-full justify-center">
+    <div className="bg-white rounded p-4 min-w-fit h-fit">
+      <div className="grid h-full justify-center gap-6">
         <div className="flex text-xl gap-1 ">
           <p>Subtotal</p>
           <p>
@@ -174,30 +176,24 @@ function PaymentBox({
           </p>
           <p className="font-emberBd">₹{total.toLocaleString()}</p>
         </div>
-        <div className="grid gap-4 self-center justify-items-center">
-          {total !== 0 ? (
-            <div>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  name="gift_check_2"
-                  className="rounded"
-                />
-                <label htmlFor="gift_check_2">This order contains a gift</label>
-              </div>
-
-              <button
-                onClick={() => {
-                  alert(`Total checkout amount: ${total.toLocaleString()}`);
-                }}
-                className="rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] text-sm self-center w-full p-2 shadow-md"
-              >
-                Proceed to buy
-              </button>
-              <p className="text-sm">EMI available</p>
+        {total !== 0 ? (
+          <div className="grid gap-2 self-center justify-items-center">
+            <div className="flex gap-2 items-center">
+              <input type="checkbox" name="gift_check_2" className="rounded" />
+              <label htmlFor="gift_check_2">This order contains a gift</label>
             </div>
-          ) : null}
-        </div>
+
+            <button
+              onClick={() => {
+                alert(`Total checkout amount: ${total.toLocaleString()}`);
+              }}
+              className="rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] text-sm self-center w-full p-2 shadow-md"
+            >
+              Proceed to buy
+            </button>
+            <p className="text-sm">EMI available</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

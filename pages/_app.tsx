@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import localFont from "@next/font/local";
 import { ReactElement, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
-import { CartItem } from "../utils/interfaces";
+import { ProductInfo } from "../utils/interfaces";
 
 const emberReg = localFont({ src: "../public/fonts/AmazonEmber_Rg.ttf" });
 
@@ -18,7 +18,7 @@ type AppPropsWithLayout = AppProps & {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  const [cartItems, setcartItems] = useState<CartItem[]>([]);
+  const [cartItems, setcartItems] = useState<ProductInfo[]>([]);
   return (
     <main className={`${emberReg.className}`}>
       {router.pathname !== "/user/sign-up" &&
@@ -26,7 +26,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       router.pathname !== "/seller/dashboard" &&
       router.pathname !== "/seller/sign-up" &&
       router.pathname !== "/seller/login" ? (
-        <Layout>
+        <Layout cartItems={cartItems.length}>
           <Component
             {...pageProps}
             cartItems={cartItems}

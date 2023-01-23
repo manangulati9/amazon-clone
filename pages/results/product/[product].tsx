@@ -1,41 +1,48 @@
 import Image from "next/image";
-import { CartItem, ProductInfo } from "../utils/interfaces";
+import { ProductInfo } from "../../../utils/interfaces";
 import { GetServerSideProps } from "next";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { auth, db, storage } from "../../../firebase/firebase";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Toast } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
+import { getDownloadURL, ref } from "firebase/storage";
+import { toTitleCase } from "../../../utils/functions";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const prodName = ctx.params!.product;
   const productColRef = collection(db, "products");
   const q = query(productColRef, where("name", "==", prodName));
   const querySnap = await getDocs(q);
-  const data = querySnap.docs[0].data();
+  const data = querySnap.docs[0].data() as ProductInfo;
+  const imageRef = ref(storage, `${data.category}/${prodName}.jpg`);
+  const imgUrl = await getDownloadURL(imageRef);
   return {
     props: {
       data,
+      imgUrl,
     },
   };
 };
 
 export default function (props: {
   data: ProductInfo;
-  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
-  cartItems: CartItem[];
+  setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
+  cartItems: ProductInfo[];
+  imgUrl: string;
 }) {
   const [toastShow, settoastShow] = useState(false);
   return (
     <div>
-      <div className="flex gap-3 px-3 pb-5 pt-8">
-        <ProductImage />
+      <div className="flex gap-3 px-3 pb-5 pt-8 justify-between sm:flex-nowrap flex-wrap">
+        <ProductImage imgUrl={props.imgUrl} />
         <ProductDetails prodData={props.data} />
         <Buybox
           prodData={props.data}
           setcartItems={props.setcartItems}
           cartItems={props.cartItems}
           settoastShow={settoastShow}
+          imgUrl={props.imgUrl}
         />
         <CartToast show={toastShow} />
       </div>
@@ -43,14 +50,14 @@ export default function (props: {
   );
 }
 
-function ProductImage() {
+function ProductImage({ imgUrl }: { imgUrl: string }) {
   return (
-    <div className="mr-5 grow-0">
+    <div className="mr-5 sm:grow-0 sm:shrink-0">
       <Image
-        src="https://source.unsplash.com/1000x1100/?smartphone"
+        src={imgUrl}
         alt="..."
-        width={800}
-        height={1000}
+        width={500}
+        height={500}
         className="rounded"
       />
     </div>
@@ -61,9 +68,7 @@ function ProductDetails({ prodData }: { prodData: ProductInfo }) {
   return (
     <div>
       <div className="grid gap-2">
-        <h1 className="text-2xl font-emberBd">
-          {prodData.name.replaceAll("-", " ")}
-        </h1>
+        <h1 className="text-2xl font-emberBd">{toTitleCase(prodData.name)}</h1>
         <div className="flex gap-5 items-center">
           <ul className="flex justify-center">
             <li>
@@ -163,7 +168,7 @@ function ProductDetails({ prodData }: { prodData: ProductInfo }) {
         <div className="flex gap-2 text-slate-600">
           M.R.P:{" "}
           <p className="line-through">
-            {(prodData.price! + 20000).toLocaleString()}
+            {(prodData.price + 10000).toLocaleString()}
           </p>{" "}
         </div>
         <p>Inclusive of all taxes</p>
@@ -186,17 +191,19 @@ function Buybox({
   prodData,
   setcartItems,
   cartItems,
+  imgUrl,
   settoastShow,
 }: {
   prodData: ProductInfo;
-  setcartItems: Dispatch<SetStateAction<CartItem[]>>;
-  cartItems: CartItem[];
+  setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
+  cartItems: ProductInfo[];
   settoastShow: Dispatch<SetStateAction<boolean>>;
+  imgUrl: string;
 }) {
   const quantityRef = useRef<any>(null);
 
   return (
-    <div className="p-6 flex flex-col gap-6 rounded border border-gray-400 text-sm h-fit shadow-lg">
+    <div className="p-6 flex flex-col gap-6 rounded border border-gray-400 text-sm h-fit shadow-lg min-w-[19rem]">
       <div className="flex flex-col gap-2">
         <button className="text-blue-600 hover:underline text-left">
           FREE DELIVERY
@@ -225,6 +232,10 @@ function Buybox({
       </div>
       <button
         onClick={() => {
+          if (!auth.currentUser) {
+            alert("Please sign in first");
+            return;
+          }
           setcartItems([
             ...cartItems,
             {
@@ -232,12 +243,13 @@ function Buybox({
               quantity: quantityRef.current!.value,
               category: prodData.category,
               price: prodData.price,
+              imgUrl: imgUrl,
             },
           ]);
           settoastShow(true);
           setTimeout(() => {
             settoastShow(false);
-          }, 2500);
+          }, 1500);
         }}
         className="rounded-2xl bg-[#ffd814] hover:bg-[#f7ca00] self-center w-full p-2 shadow-md"
       >

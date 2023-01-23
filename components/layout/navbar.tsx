@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { handleAuthChange } from "../../utils/functions";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import amazonLogo from "../../public/assets/navbar/amazon_logo.png";
 import indiaFlag from "../../public/assets/navbar/Flag_of_India.png";
@@ -8,16 +9,19 @@ import Link from "next/link";
 import { Tooltip } from "flowbite-react";
 import { HiChevronDown } from "react-icons/hi";
 import { BiMap } from "react-icons/bi";
-import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, db } from "../../firebase/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
-export default function Navbar() {
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../../firebase/firebase";
+import { getUserData } from "../../utils/functions";
+import { NavSearch, UserInterface } from "../../utils/interfaces";
+import { useRouter } from "next/router";
+import { Url } from "url";
+export default function Navbar({ cartItems }: { cartItems: number }) {
   return (
     <>
       <nav className="lg:flex bg-amznDarkBlue text-white gap-2 justify-around items-center p-2">
         <Logo_Address />
         <Searchbar />
-        <SignIn_Cart />
+        <SignIn_Cart cartItems={cartItems} />
       </nav>
       <Nav2 />
     </>
@@ -44,8 +48,26 @@ function Logo_Address() {
 }
 
 function Searchbar() {
+  const formRef = useRef<any>(null);
+  const router = useRouter();
   return (
-    <div className="flex text-black h-10 lg:m-0 my-2 lg:w-[45rem] w-full focus-within:outline outline-[3px] outline-orange-400 rounded">
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const searchQuery = (
+          (e.target as HTMLFormElement).elements as NavSearch
+        ).search.value;
+        if (searchQuery) {
+          const url = `/results/${searchQuery}` as unknown as Url;
+          router.push(url);
+          formRef.current.reset();
+        } else {
+          alert("Please enter a valid category");
+        }
+      }}
+      className="flex text-black h-10 lg:m-0 my-2 lg:w-[44rem] w-full focus-within:outline outline-[3px] outline-orange-400 rounded"
+      ref={formRef}
+    >
       <select
         name="search_in"
         className={`w-20 font-emberRg rounded-l bg-[#f3f3f3] hover:bg-[#dadada] text-xs border-r border-gray-400 focus:border-orange-400 focus:border-r-[3px]`}
@@ -180,21 +202,44 @@ function Searchbar() {
           Watches
         </option>
       </select>
-      <input className="w-full px-2 focus:outline-none" type="search" />
-      <button className="bg-amznOrange-50 hover:bg-amznOrange-100 px-3 rounded-r shrink-0">
+      <input
+        className="w-full px-2 focus:outline-none"
+        type="search"
+        name="search"
+      />
+      <button
+        className="bg-amznOrange-50 hover:bg-amznOrange-100 px-3 rounded-r shrink-0"
+        type="submit"
+      >
         <Image src={searchIcon} alt="searchIcon" className="w-6" quality={10} />
       </button>
-    </div>
+    </form>
   );
 }
 
-function SignIn_Cart() {
+function SignIn_Cart({ cartItems }: { cartItems: number }) {
   const [user, setuser] = useState("");
   const [usrType, setusrType] = useState("");
   onAuthStateChanged(auth, async (user) => {
     const usrData = await handleAuthChange(user);
     setuser(usrData ? usrData.firstName : "");
     setusrType(usrData ? usrData.usertype : "");
+    let userSessionTimeout = null;
+    if (user && userSessionTimeout === null) {
+      user.getIdTokenResult().then((idTokenResult) => {
+        const authTime = parseInt(idTokenResult.claims.auth_time!) * 1000;
+        const sessionDurationInMilliseconds = 60 * 60 * 2000; // 120 min
+        const expirationInMilliseconds =
+          sessionDurationInMilliseconds - (Date.now() - authTime);
+        userSessionTimeout = setTimeout(
+          () => auth.signOut(),
+          expirationInMilliseconds
+        );
+      });
+    } else if (userSessionTimeout) {
+      clearTimeout(userSessionTimeout);
+      userSessionTimeout = null;
+    }
   });
   return (
     <div className="flex justify-around h-fit gap-5 lg:pt-0 items-center">
@@ -229,14 +274,16 @@ function SignIn_Cart() {
         <div className="text-xs">Returns</div>
         <div className="font-emberBd text-sm">& Orders</div>
       </button>
-      <Link
-        href="/cart"
-        className="flex gap-2 hover:outline outline-1 rounded-[2px] py-1 px-2"
-      >
-        <div>
-          <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
+      <Link href="/cart" className="flex gap-2 w-fit">
+        <span className="text-orange-500 font-emberBd relative h-fit right-[-2.6rem] bottom-[0.3rem]">
+          {cartItems}
+        </span>
+        <div className="hover:outline outline-1 rounded-[2px] flex gap-2 py-1 px-2">
+          <div>
+            <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
+          </div>
+          <div className="font-emberBd text-sm h-fit self-end">Cart</div>
         </div>
-        <div className="font-emberBd text-sm h-fit self-end">Cart</div>
       </Link>
     </div>
   );
@@ -348,6 +395,13 @@ function Nav2() {
 }
 
 function SignInModal({ usertype }: { usertype: string }) {
+  const [userType, setuserType] = useState("customer");
+  useEffect(() => {
+    (async () => {
+      const userData = (await getUserData()) as UserInterface;
+      if (userData) setuserType(userData.usertype);
+    })();
+  });
   return (
     <div className="flex flex-col gap-2 text-emberRg text-xs w-[28rem] text-black p-2">
       <div className="flex flex-col justify-center items-center gap-2 ">
@@ -430,7 +484,9 @@ function SignInModal({ usertype }: { usertype: string }) {
         <div className="flex flex-col gap-2 ">
           <h3 className="font-emberBd mb-1 text-base">Your Account</h3>
           <Link
-            href=""
+            href={
+              userType === "customer" ? "/user/dashboard" : "/seller/dashboard"
+            }
             className="block text-xs hover:underline hover:text-amznOrange-100"
           >
             Your Account
@@ -559,16 +615,4 @@ function LanguageSelectModal() {
       </div>
     </div>
   );
-}
-
-async function handleAuthChange(user: User | null) {
-  if (user) {
-    const uid = user.uid;
-    const userColRef = collection(db, "users");
-    const q = query(userColRef, where("uid", "==", uid));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs[0].data();
-  } else {
-    return null;
-  }
 }

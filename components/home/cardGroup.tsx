@@ -4,31 +4,31 @@ export default function CardGroup() {
   return (
     <div className="flex gap-4 mx-3 flex-1 items-stretch flex-wrap justify-center sm:flex-nowrap">
       <ProductCard
-        cat1="smartphones"
-        cat2="clothing"
-        cat3="watches"
-        cat4="toys"
+        cat0="smartphones"
+        cat1="clothing"
+        cat2="watches"
+        cat3="toys"
         title="Most searched categories"
       />
       <ProductCard
-        cat1="air conditioners"
-        cat2="microwaves"
-        cat3="washing machines"
-        cat4="refrigerators"
+        cat0="air conditioners"
+        cat1="microwaves"
+        cat2="washing machines"
+        cat3="refrigerators"
         title="Up to 65% off | Appliances for your home"
       />
       <ProductCard
-        cat1="toys"
-        cat2="books"
-        cat3="trimmers"
-        cat4="gaming accessories"
+        cat0="toys"
+        cat1="books"
+        cat2="trimmers"
+        cat3="gaming accessories"
         title="Starting ₹49 | Books, toys & more"
       />
       <ProductCard
-        cat1="kitchen appliances"
-        cat2="cooking utensils"
-        cat3="dinner sets"
-        cat4="kitchen organsiser"
+        cat0="kitchen appliances"
+        cat1="cooking utensils"
+        cat2="dinner sets"
+        cat3="kitchen organsiser"
         title="Up to 70% off | Kitchen picks from local shops"
       />
     </div>

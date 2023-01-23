@@ -1,7 +1,7 @@
 import Image from "next/image";
 import amznLogo from "../../public/assets/Amazon_logo.svg";
 import Link from "next/link";
-import { SignIn } from "../../utils/functions";
+import { signIn } from "../../utils/functions";
 import { useRouter } from "next/router";
 import { useRef } from "react";
 export default function () {
@@ -18,7 +18,7 @@ export default function () {
           <form
             className="text-xs flex flex-col gap-2 mt-2"
             onSubmit={(e) => {
-              SignIn(e);
+              signIn(e);
               router.push("/");
             }}
           >
