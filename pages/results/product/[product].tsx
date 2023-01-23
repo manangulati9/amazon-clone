@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ProductInfo } from "../../../utils/interfaces";
+import { ProductInfo, UserInterface } from "../../../utils/interfaces";
 import { GetServerSideProps } from "next";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db, storage } from "../../../firebase/firebase";
@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Toast } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
 import { getDownloadURL, ref } from "firebase/storage";
-import { toTitleCase } from "../../../utils/functions";
+import { getDay, getMonth, toTitleCase } from "../../../utils/functions";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const prodName = ctx.params!.product;
@@ -17,10 +17,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const data = querySnap.docs[0].data() as ProductInfo;
   const imageRef = ref(storage, `${data.category}/${prodName}.jpg`);
   const imgUrl = await getDownloadURL(imageRef);
+  const selleruid = data.uid;
+  const sellerNameQuery = query(
+    collection(db, "users"),
+    where("uid", "==", selleruid)
+  );
+  const sellerQuerySnap = await getDocs(sellerNameQuery);
+  const sellerData = sellerQuerySnap.docs[0].data() as UserInterface;
+  const sellerName = sellerData.firstName + " " + sellerData.lastName;
   return {
     props: {
       data,
       imgUrl,
+      sellerName,
     },
   };
 };
@@ -30,6 +39,7 @@ export default function (props: {
   setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
   cartItems: ProductInfo[];
   imgUrl: string;
+  sellerName: string;
 }) {
   const [toastShow, settoastShow] = useState(false);
   return (
@@ -43,6 +53,7 @@ export default function (props: {
           cartItems={props.cartItems}
           settoastShow={settoastShow}
           imgUrl={props.imgUrl}
+          sellerName={props.sellerName}
         />
         <CartToast show={toastShow} />
       </div>
@@ -193,28 +204,34 @@ function Buybox({
   cartItems,
   imgUrl,
   settoastShow,
+  sellerName,
 }: {
   prodData: ProductInfo;
   setcartItems: Dispatch<SetStateAction<ProductInfo[]>>;
   cartItems: ProductInfo[];
   settoastShow: Dispatch<SetStateAction<boolean>>;
   imgUrl: string;
+  sellerName: string;
 }) {
   const quantityRef = useRef<any>(null);
-
+  const today = new Date().getDate();
+  const monNum = new Date().getMonth();
   return (
     <div className="p-6 flex flex-col gap-6 rounded border border-gray-400 text-sm h-fit shadow-lg min-w-[19rem]">
       <div className="flex flex-col gap-2">
         <button className="text-blue-600 hover:underline text-left">
           FREE DELIVERY
         </button>
-        <p className="font-emberBd">Thursday, 12 January.</p>
+        <p className="font-emberBd">
+          {getDay(((today + 2) % 7) - 1)}, {today + 2} {getMonth(monNum)}.
+        </p>
       </div>
       <p>
-        Or fastest delivery Tomorrow, January 11. Order within 3 hrs 47 mins.
+        Or fastest delivery Tomorrow, {getMonth(monNum)} {today + 1}. Order
+        within 3 hrs 47 mins.
       </p>
       <p className="text-lg text-green-600 font-emberBd">In stock.</p>
-      <p>Sold by SellerName and Fulfilled by Amazon</p>
+      <p>Sold by {sellerName} and Fulfilled by Amazon</p>
       <div className="flex gap-3 items-center">
         <label htmlFor="quantity">Quantity</label>
         <select

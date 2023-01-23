@@ -288,3 +288,34 @@ export async function handleAuthChange(user: User | null) {
     return null;
   }
 }
+
+export function getDay(date: number) {
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  return days[date];
+}
+
+export function getMonth(monNum: number) {
+  const month = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  return month[monNum];
+}
