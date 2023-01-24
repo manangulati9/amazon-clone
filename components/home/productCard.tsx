@@ -15,12 +15,12 @@ export default function ({
   title: string;
 }) {
   return (
-    <div className="flex flex-col gap-4 justify-between w-[22rem] bg-white rounded-md text-sm px-6 py-4 shadow-lg my-5 drop-shadow-sm">
-      <h3 className="text-lg font-emberBd">{title}</h3>
+    <div className="flex flex-col gap-2 sm:gap-4 justify-between bg-white rounded-md text-xs sm:text-sm px-6 py-4 shadow-lg drop-shadow-sm ">
+      <h3 className="md:text-lg text-sm font-emberBd">{title}</h3>
       <div className="grid grid-cols-2 place-items-center gap-4">
         <Link
           href={`/results/${cat0.replaceAll(" ", "-")}`}
-          className="flex flex-col gap-2 w-fit"
+          className="flex flex-col gap-2 w-[70px] sm:w-[100px] xl:w-[120px]"
         >
           <Image
             src={`https://source.unsplash.com/120x120/?${cat0}`}
@@ -29,11 +29,13 @@ export default function ({
             height={120}
             className="rounded-sm"
           />
-          <p>{cat0.charAt(0).toUpperCase() + cat0.slice(1)}</p>
+          <p className="truncate grow-0">
+            {cat0.charAt(0).toUpperCase() + cat0.slice(1)}
+          </p>
         </Link>
         <Link
           href={`/results/${cat1.replaceAll(" ", "-")}`}
-          className="flex flex-col gap-2 w-fit"
+          className="flex flex-col gap-2 w-[70px] sm:w-[100px] xl:w-[120px]"
         >
           <Image
             src={`https://source.unsplash.com/120x120/?${cat1}`}
@@ -42,11 +44,13 @@ export default function ({
             height={120}
             className="rounded-sm"
           />
-          <p>{cat1.charAt(0).toUpperCase() + cat1.slice(1)}</p>
+          <p className="truncate grow-0">
+            {cat1.charAt(0).toUpperCase() + cat1.slice(1)}
+          </p>
         </Link>
         <Link
           href={`/results/${cat2.replaceAll(" ", "-")}`}
-          className="flex flex-col gap-2 w-fit"
+          className="flex flex-col gap-2 w-[70px] sm:w-[100px] xl:w-[120px]"
         >
           <Image
             src={`https://source.unsplash.com/120x120/?${cat2}`}
@@ -55,11 +59,13 @@ export default function ({
             height={120}
             className="rounded-sm"
           />
-          <p>{cat2.charAt(0).toUpperCase() + cat2.slice(1)}</p>
+          <p className="truncate grow-0">
+            {cat2.charAt(0).toUpperCase() + cat2.slice(1)}
+          </p>
         </Link>
         <Link
           href={`/results/${cat3.replaceAll(" ", "-")}`}
-          className="flex flex-col gap-2 w-fit"
+          className="flex flex-col gap-2 w-[70px] sm:w-[100px] xl:w-[120px]"
         >
           <Image
             src={`https://source.unsplash.com/120x120/?${cat3}`}
@@ -68,10 +74,12 @@ export default function ({
             height={120}
             className="rounded-sm"
           />
-          <p>{cat3.charAt(0).toUpperCase() + cat3.slice(1)}</p>
+          <p className="truncate grow-0">
+            {cat3.charAt(0).toUpperCase() + cat3.slice(1)}
+          </p>
         </Link>
       </div>
-      <button className="text-md text-blue-600 hover:underline self-start">
+      <button className="text-blue-600 hover:underline self-start">
         See More
       </button>
     </div>

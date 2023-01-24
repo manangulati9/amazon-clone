@@ -1,6 +1,6 @@
 import { handleAuthChange } from "../../utils/functions";
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import amazonLogo from "../../public/assets/navbar/amazon_logo.png";
 import indiaFlag from "../../public/assets/navbar/Flag_of_India.png";
 import cart from "../../public/assets/navbar/cart.png";
@@ -16,21 +16,37 @@ import { NavSearch, UserInterface } from "../../utils/interfaces";
 import { useRouter } from "next/router";
 import { Url } from "url";
 export default function Navbar({ cartItems }: { cartItems: number }) {
+  const [nav2Show, setnav2Show] = useState(true);
+  const [allBtnShow, setallBtnShow] = useState(false);
+  useEffect(() => {
+    if (window.innerWidth <= 810) {
+      setnav2Show(false);
+      setallBtnShow(true);
+    }
+  }, []);
   return (
     <>
-      <nav className="lg:flex bg-amznDarkBlue text-white gap-2 justify-around items-center p-2">
+      <nav className="flex bg-amznDarkBlue text-white text-xs sm:text-base gap-2 justify-between items-center p-2 flex-col lg:flex-row">
         <Logo_Address />
         <Searchbar />
-        <SignIn_Cart cartItems={cartItems} />
+        <div className="flex justify-between shrink-0 gap-2 ">
+          {allBtnShow ? (
+            <All setnav2Show={setnav2Show} nav2Show={nav2Show} />
+          ) : null}
+          <Lang indiaFlag={indiaFlag} />
+          <SignIn />
+          <ReturnsOrders />
+          <Cart cartItems={cartItems} cart={cart} />
+        </div>
       </nav>
-      <Nav2 />
+      {nav2Show ? <Nav2 /> : null}
     </>
   );
 }
 
 function Logo_Address() {
   return (
-    <div className="flex justify-between gap-7 items-center">
+    <div className="flex justify-between gap-7 items-center shrink-0">
       <div className="hover:outline outline-1 rounded-[2px] p-2">
         <Link href="/">
           <Image src={amazonLogo} className="h-8 w-auto" alt="amzn_logo" />
@@ -40,7 +56,9 @@ function Logo_Address() {
         <BiMap className="text-xl mt-4" />
         <div className="flex flex-col h-fit  py-1 px-1">
           <div className="text-xs">Hello</div>
-          <div className="font-emberBd text-sm">Select Your Address</div>
+          <div className="font-emberBd sm:text-sm text-xs">
+            Select Your Address
+          </div>
         </div>
       </button>
     </div>
@@ -65,12 +83,12 @@ function Searchbar() {
           alert("Please enter a valid category");
         }
       }}
-      className="flex text-black h-10 lg:m-0 my-2 lg:w-[44rem] w-full focus-within:outline outline-[3px] outline-orange-400 rounded"
+      className="flex justify-between text-black h-10 lg:m-0 my-2 focus-within:outline outline-[3px] outline-orange-400 rounded w-full"
       ref={formRef}
     >
       <select
         name="search_in"
-        className={`w-20 font-emberRg rounded-l bg-[#f3f3f3] hover:bg-[#dadada] text-xs border-r border-gray-400 focus:border-orange-400 focus:border-r-[3px]`}
+        className={`w-[4.5rem] font-emberRg rounded-l bg-[#f3f3f3] hover:bg-[#dadada] text-xs border-r border-gray-400 focus:border-orange-400 focus:border-r-[3px]`}
       >
         <option value="all" className="text-sm">
           All
@@ -217,7 +235,7 @@ function Searchbar() {
   );
 }
 
-function SignIn_Cart({ cartItems }: { cartItems: number }) {
+function SignIn() {
   const [user, setuser] = useState("");
   const [usrType, setusrType] = useState("");
   onAuthStateChanged(auth, async (user) => {
@@ -244,19 +262,6 @@ function SignIn_Cart({ cartItems }: { cartItems: number }) {
   return (
     <div className="flex justify-around h-fit gap-5 lg:pt-0 items-center">
       <Tooltip
-        content={<LanguageSelectModal />}
-        placement="bottom"
-        style="light"
-      >
-        <button className="gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2 min-[450px]:flex hidden">
-          <Image src={indiaFlag} alt="flag" className="w-auto h-3 " />
-          <div className="flex gap-1 font-emberBd text-sm">
-            EN
-            <HiChevronDown className="mt-1" />
-          </div>
-        </button>
-      </Tooltip>
-      <Tooltip
         content={<SignInModal usertype={usrType} />}
         placement="bottom"
         style="light"
@@ -265,131 +270,63 @@ function SignIn_Cart({ cartItems }: { cartItems: number }) {
           <div className="text-xs">{`Hello, ${
             user ? user.charAt(0).toUpperCase() + user.slice(1) : "Sign in"
           }`}</div>
-          <div className=" flex gap-1 font-emberBd text-sm">
+          <div className=" flex gap-1 font-emberBd sm:text-sm text-xs">
             Account & Lists <HiChevronDown className="mt-1" />
           </div>
         </button>
       </Tooltip>
-      <button className="flex flex-col hover:outline text-left outline-1 rounded-[2px] py-1 px-2">
-        <div className="text-xs">Returns</div>
-        <div className="font-emberBd text-sm">& Orders</div>
-      </button>
-      <Link href="/cart" className="flex gap-2 w-fit">
-        <span className="text-orange-500 font-emberBd relative h-fit right-[-2.6rem] bottom-[0.3rem]">
-          {cartItems}
-        </span>
-        <div className="hover:outline outline-1 rounded-[2px] flex gap-2 py-1 px-2">
-          <div>
-            <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
-          </div>
-          <div className="font-emberBd text-sm h-fit self-end">Cart</div>
-        </div>
-      </Link>
     </div>
   );
 }
 
 function Nav2() {
   return (
-    <nav className="md:flex justify-around bg-[#232f3e] text-white px-3 py-1 hidden text-wrap">
-      <button className="hover:outline outline-1 rounded-[2px] flex gap-2 items-center px-2">
-        <div className="flex flex-col gap-1">
-          <hr className="bg-white w-4 h-[0.1rem]" />
-          <hr className="bg-white w-4 h-[0.1rem]" />
-          <hr className="bg-white w-4 h-[0.1rem]" />
-        </div>
-        <p className="font-emberBd">All</p>
-      </button>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+    <nav className="bg-[#232f3e] text-white px-3 py-1 flex-wrap flex justify-around">
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Amazon miniTV{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Sell{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Best Sellers
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Mobiles{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Today's Deals{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Customer Service{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Electronics{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Prime{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Fashion{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Amazon Pay{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Home & Kitchen{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
-        New Releases{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
-        Books{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
-        Computers{" "}
-      </Link>
-      <Link
-        href=""
-        className="hover:outline outline-1 block rounded-[2px] py-1 px-2 text-sm"
-      >
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
+        New Releases
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
+        Computers
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
         Beauty & Personal Care
-      </Link>
+      </button>
+      <button className="hover:outline outline-1 rounded-[2px] py-1 px-2 sm:text-sm text-xs">
+        Books
+      </button>
     </nav>
   );
 }
@@ -403,18 +340,18 @@ function SignInModal({ usertype }: { usertype: string }) {
     })();
   });
   return (
-    <div className="flex flex-col gap-2 text-emberRg text-xs w-[28rem] text-black p-2">
+    <div className="flex flex-col gap-2 text-emberRg text-xs text-black p-2">
       <div className="flex flex-col justify-center items-center gap-2 ">
         {auth.currentUser === null ? (
           <div className="flex flex-col gap-2 items-center justify-center">
             <div className="flex items-center justify-center gap-3">
               <Link href="/user/login">
-                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
+                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 py-1.5 border-orange-300 border text-sm px-2">
                   Sign in as customer
                 </button>
               </Link>
               <Link href="/seller/login">
-                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm">
+                <button className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 py-1.5 border-orange-300 border text-sm px-2">
                   Sign in as seller
                 </button>
               </Link>
@@ -439,7 +376,7 @@ function SignInModal({ usertype }: { usertype: string }) {
                 console.log(error);
               }
             }}
-            className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 w-48 py-1.5 border-orange-300 border text-sm"
+            className="bg-gradient-to-t from-yellow-300 to-yellow-100  rounded hover:to-yellow-200 py-1.5 border-orange-300 border text-sm px-2"
           >
             Sign out
           </button>
@@ -516,30 +453,6 @@ function SignInModal({ usertype }: { usertype: string }) {
             Your Prime Membership
           </Link>
           <Link
-            href=""
-            className="block text-xs hover:underline hover:text-amznOrange-100"
-          >
-            Your Prime Video
-          </Link>
-          <Link
-            href=""
-            className="block text-xs hover:underline hover:text-amznOrange-100"
-          >
-            Your Subscribe & Save Items
-          </Link>
-          <Link
-            href=""
-            className="block text-xs hover:underline hover:text-amznOrange-100"
-          >
-            Memberships & Subscriptions
-          </Link>
-          <Link
-            href=""
-            className="block text-xs hover:underline hover:text-amznOrange-100"
-          >
-            Your Amazon Business Account
-          </Link>
-          <Link
             href="/seller/dashboard"
             className="block text-xs hover:underline hover:text-amznOrange-100"
           >
@@ -614,5 +527,71 @@ function LanguageSelectModal() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function Lang({ indiaFlag }: { indiaFlag: StaticImageData }) {
+  return (
+    <Tooltip content={<LanguageSelectModal />} placement="bottom" style="light">
+      <button className="gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2 min-[450px]:flex hidden">
+        <Image src={indiaFlag} alt="flag" className="w-auto h-3 " />
+        <div className="flex gap-1 font-emberBd text-sm">
+          EN
+          <HiChevronDown className="mt-1" />
+        </div>
+      </button>
+    </Tooltip>
+  );
+}
+
+function Cart({
+  cartItems,
+  cart,
+}: {
+  cartItems: number;
+  cart: StaticImageData;
+}) {
+  return (
+    <Link
+      href="/cart"
+      className="flex gap-2 items-end justify-between hover:outline outline-1 rounded-[2px] py-1 px-2"
+    >
+      <span className="text-orange-500 font-emberBd relative h-fit bottom-4 max-[425px]:bottom-5 left-[2.1rem]">
+        {cartItems}
+      </span>
+      <Image src={cart} className="w-auto h-8 self-center" alt="cart" />
+      <div className="font-emberBd sm:text-sm text-xs h-fit self-end">Cart</div>
+    </Link>
+  );
+}
+
+function ReturnsOrders() {
+  return (
+    <button className="flex flex-col hover:outline text-left outline-1 rounded-[2px] py-1 px-2">
+      <div className="text-xs">Returns</div>
+      <div className="font-emberBd sm:text-sm text-xs">& Orders</div>
+    </button>
+  );
+}
+
+function All({
+  nav2Show,
+  setnav2Show,
+}: {
+  nav2Show: boolean;
+  setnav2Show: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  return (
+    <button
+      className="hover:outline outline-1 rounded-[2px] flex gap-2 items-center px-2"
+      onClick={() => setnav2Show(!nav2Show)}
+    >
+      <div className="flex flex-col gap-1">
+        <hr className="bg-white w-4 h-[0.1rem]" />
+        <hr className="bg-white w-4 h-[0.1rem]" />
+        <hr className="bg-white w-4 h-[0.1rem]" />
+      </div>
+      <p className="font-emberBd">All</p>
+    </button>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import ProductCard from "./productCard";
 export default function CardGroup() {
   return (
-    <div className="flex gap-4 mx-3 flex-1 items-stretch flex-wrap justify-center sm:flex-nowrap">
+    <div className="grid gap-4 mx-3 grid-cols-2 md:grid-cols-4">
       <ProductCard
         cat0="smartphones"
         cat1="clothing"

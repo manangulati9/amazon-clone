@@ -9,10 +9,10 @@ export default function ({
   cartItems: number;
 }) {
   return (
-    <>
+    <div>
       <Navbar cartItems={cartItems} />
       {children}
       <Footer />
-    </>
+    </div>
   );
 }

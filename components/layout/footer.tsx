@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 export default function () {
   return (
-    <footer className="text-white">
+    <footer className="text-white h-full">
       <button
         className="bg-[#37475a] hover:bg-[#485769] w-full text-xs p-3"
         onClick={() => {
@@ -11,7 +11,7 @@ export default function () {
       >
         Back to top
       </button>
-      <div className="flex justify-evenly items-top py-7 bg-[#232f3e]">
+      <div className="flex sm:justify-evenly items-top py-7 bg-[#232f3e] sm:flex-row flex-col gap-6 p-5 items-baseline">
         <div>
           <h2 className="font-emberBd mb-3">Get To Know Us</h2>
           <Link
