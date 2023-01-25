@@ -58,16 +58,21 @@ function Product({
   imgUrl: string | undefined;
 }) {
   return (
-    <Link href={`/results/product/${prodName}`} className="flex gap-4 w-fit">
+    <Link
+      href={`/results/product/${prodName}`}
+      className="flex gap-4 flex-col md:flex-row items-center md:items-start w-full md:w-fit"
+    >
       <Image
         src={imgUrl ? imgUrl : ""}
         alt={`${prodName}.img`}
         width={200}
         height={100}
-        className="rounded"
+        className="rounded "
       />
       <div className="flex flex-col gap-2 text-start">
-        <p className="text-lg font-emberBd">{toTitleCase(prodName)}</p>
+        <p className="font-emberBd md:text-xl text-base sm:text-lg">
+          {toTitleCase(prodName)}
+        </p>
         <div className="flex gap-1 items-center">
           <p className="text-sm">4.6</p>
           <ul className="flex justify-center">
@@ -160,7 +165,7 @@ function Product({
           <p className="text-blue-500 text-xs">(188)</p>
         </div>
         <div className="flex gap-1 items-center">
-          <p className="text-2xl font-semibold">
+          <p className="font-semibold md:text-xl text-base sm:text-lg">
             ₹{prodPrice.toLocaleString()}
           </p>
           <p className="text-gray-600 line-through text-xs">

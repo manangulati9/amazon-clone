@@ -3,7 +3,7 @@ import { ProductInfo, UserInterface } from "../../../utils/interfaces";
 import { GetServerSideProps } from "next";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db, storage } from "../../../firebase/firebase";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Toast } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
 import { getDownloadURL, ref } from "firebase/storage";
@@ -44,7 +44,7 @@ export default function (props: {
   const [toastShow, settoastShow] = useState(false);
   return (
     <div>
-      <div className="flex gap-3 px-3 pb-5 pt-8 justify-between sm:flex-nowrap flex-wrap">
+      <div className="flex gap-3 px-3 pb-5 pt-8 justify-center flex-col lg:flex-row lg:items-start items-center">
         <ProductImage imgUrl={props.imgUrl} />
         <ProductDetails prodData={props.data} />
         <Buybox
@@ -69,7 +69,7 @@ function ProductImage({ imgUrl }: { imgUrl: string }) {
         alt="..."
         width={500}
         height={500}
-        className="rounded"
+        className="rounded sm:h-64 lg:h-96 h-56 w-auto"
       />
     </div>
   );
@@ -79,7 +79,9 @@ function ProductDetails({ prodData }: { prodData: ProductInfo }) {
   return (
     <div>
       <div className="grid gap-2">
-        <h1 className="text-2xl font-emberBd">{toTitleCase(prodData.name)}</h1>
+        <h1 className="md:text-2xl font-emberBd sm:text-xl text-lg">
+          {toTitleCase(prodData.name)}
+        </h1>
         <div className="flex gap-5 items-center">
           <ul className="flex justify-center">
             <li>
@@ -168,27 +170,32 @@ function ProductDetails({ prodData }: { prodData: ProductInfo }) {
               </svg>
             </li>
           </ul>
-          <button className="text-blue-500 hover:underline">
+          <button className="text-blue-500 hover:underline md:text-lg text-xs sm:text-base">
             28,039 ratings
           </button>
         </div>
       </div>
       <hr className="border bg-slate-500 my-2.5" />
       <div>
-        <p className="text-2xl my-2">₹{prodData.price?.toLocaleString()}</p>
-        <div className="flex gap-2 text-slate-600">
+        <p className="md:text-2xl text-lg sm:text-xl my-2">
+          ₹{prodData.price?.toLocaleString()}
+        </p>
+        <div className="flex gap-2 text-slate-600 md:text-lg text-sm sm:text-base">
           M.R.P:{" "}
           <p className="line-through">
             {(prodData.price + 10000).toLocaleString()}
           </p>{" "}
         </div>
-        <p>Inclusive of all taxes</p>
-        <p> EMI starts at ₹1,672. No Cost EMI available</p>
+        <p className="text-xs sm:text-sm">Inclusive of all taxes</p>
+        <p className="text-xs sm:text-sm">
+          {" "}
+          EMI starts at ₹1,672. No Cost EMI available
+        </p>
       </div>
       <hr className="border bg-slate-500 my-2.5" />
       <div className="grid gap-2">
         <h2 className="font-emberBd">About this item</h2>
-        <ul className="list-disc list-inside">
+        <ul className="list-disc list-inside text-sm sm:text-base">
           {prodData.about?.map((point) => {
             return <li key={point}>{point}</li>;
           })}

@@ -225,8 +225,10 @@ export async function handleProdDelete(checkedItems: CheckedItems[]) {
           storage,
           `${item.category.toLowerCase()}/${item.name}.jpg`
         );
-        await deleteDoc(doc(db, "products", item.name));
-        await deleteObject(oldImgRef);
+        await Promise.all([
+          deleteDoc(doc(db, "products", item.name)),
+          deleteObject(oldImgRef),
+        ]);
       });
     } catch (error) {
       alert(`An error has occured: ${error}`);

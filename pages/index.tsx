@@ -23,7 +23,7 @@ export default function Home(props: {
   return (
     <div>
       <Carousel />
-      <div className="flex flex-1 flex-col items-center bg-transparent p-3 gap-2 relative bottom-20 sm:bottom-28 md:bottom-[21rem]">
+      <div className="flex flex-col items-center bg-transparent relative p-3 gap-2 -mt-[4.5rem] z-10 sm:-mt[8.5rem] lg:-mt-[17.5rem] md:-mt-[10.5rem]">
         <CardGroup />
         <TodaysDeals prods={props.smartphones.slice(0, 6)} />
         <CardGroup />

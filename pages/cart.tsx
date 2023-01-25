@@ -94,7 +94,7 @@ function CartItem({
 }) {
   const imgUrl = data.imgUrl ? data.imgUrl : "";
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 flex-col md:flex-row lg:justify-start justify-center">
       <div className="mr-5 grow-0">
         <Image
           src={imgUrl}
@@ -105,7 +105,7 @@ function CartItem({
         />
       </div>
       <div className="w-full flex flex-col justify-between">
-        <div className="flex w-full text-xl items-center justify-between">
+        <div className="flex w-full items-center justify-between md:text-xl text-base sm:text-lg flex-col md:flex-row">
           <h2>{toTitleCase(data.name)}</h2>
           <h3 className="font-emberBd">₹{data.price.toLocaleString()}</h3>
         </div>

@@ -9,7 +9,7 @@ import img6 from "../../public/assets/homeCarousel/hp7.jpg";
 import { Carousel } from "antd";
 export default function () {
   return (
-    <Carousel dots={false} autoplay>
+    <Carousel dots={false} autoplay className="z-0">
       <Image src={img0} alt="..." />
       <Image src={img1} alt="..." />
       <Image src={img2} alt="..." />
