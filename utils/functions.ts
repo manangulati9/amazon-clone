@@ -32,9 +32,9 @@ import {
 
 const usersColRef = collection(db, "users");
 const productsColRef = collection(db, "products");
-const validProductCategories = [
+export const validProductCategories = [
   "smartphones",
-  "clothes",
+  "clothing",
   "watches",
   "gaming accesories",
   "toys",
@@ -238,20 +238,22 @@ export async function handleProdDelete(checkedItems: CheckedItems[]) {
 
 export async function handleNavSearch(searchQuery: string) {
   try {
-    if (validProductCategories.includes(searchQuery)) {
+    let products: ProductInfo[] = [];
       const q = query(productsColRef, where("category", "==", searchQuery));
       const querySnap = await getDocs(q);
-      const products = await Promise.all(
-        querySnap.docs.map(async (doc) => {
-          const data = doc.data() as ProductInfo;
-          data.imgUrl = await getImgUrl(data.category, data.name);
-          return data;
-        })
-      );
-      return products;
-    }
+      if (!querySnap.empty) {
+        products = await Promise.all(
+          querySnap.docs.map(async (doc) => {
+            const data = doc.data() as ProductInfo;
+            data.imgUrl = await getImgUrl(data.category, data.name);
+            return data;
+          })
+        );
+      }
+    return products;
   } catch (error) {
-    alert(`An error has occured: ${error}`);
+    alert(`An error has occured`);
+    console.log({ message: error });
   }
 }
 

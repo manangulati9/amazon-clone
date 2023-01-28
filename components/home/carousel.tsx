@@ -1,22 +1,81 @@
 import Image from "next/image";
-import img0 from "../../public/assets/homeCarousel/hp1.jpg";
-import img1 from "../../public/assets/homeCarousel/hp2.jpg";
-import img2 from "../../public/assets/homeCarousel/hp3.jpg";
-import img3 from "../../public/assets/homeCarousel/hp4.jpg";
-import img4 from "../../public/assets/homeCarousel/hp5.png";
-import img5 from "../../public/assets/homeCarousel/hp6.png";
-import img6 from "../../public/assets/homeCarousel/hp7.jpg";
 import { Carousel } from "antd";
+import { useEffect, useState } from "react";
 export default function () {
+  const [screenWidth, setscreenWidth] = useState(0);
+  useEffect(() => setscreenWidth(window.innerWidth), []);
   return (
     <Carousel dots={false} autoplay className="z-0">
-      <Image src={img0} alt="..." />
-      <Image src={img1} alt="..." />
-      <Image src={img2} alt="..." />
-      <Image src={img3} alt="..." />
-      <Image src={img4} alt="..." />
-      <Image src={img5} alt="..." />
-      <Image src={img6} alt="..." />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp1.jpg"
+            : "/assets/homeCarousel/mobile/hp1.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp2.jpg"
+            : "/assets/homeCarousel/mobile/hp2.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp3.jpg"
+            : "/assets/homeCarousel/mobile/hp3.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp4.jpg"
+            : "/assets/homeCarousel/mobile/hp4.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp5.jpg"
+            : "/assets/homeCarousel/mobile/hp5.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp6.jpg"
+            : "/assets/homeCarousel/mobile/hp6.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
+      <Image
+        src={
+          screenWidth > 810
+            ? "/assets/homeCarousel/hp7.jpg"
+            : "/assets/homeCarousel/mobile/hp7.jpg"
+        }
+        alt="..."
+        width={1500}
+        height={570}
+      />
     </Carousel>
   );
 }

@@ -6,8 +6,10 @@ import { handleNavSearch } from "../utils/functions";
 import { ProductInfo } from "../utils/interfaces";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const smartphones = await handleNavSearch("smartphones");
-  const watches = await handleNavSearch("watches");
+  const [smartphones, watches] = await Promise.all([
+    handleNavSearch("smartphones"),
+    handleNavSearch("watches"),
+  ]);
   return {
     props: {
       smartphones,
@@ -23,7 +25,7 @@ export default function Home(props: {
   return (
     <div>
       <Carousel />
-      <div className="flex flex-col items-center bg-transparent relative p-3 gap-2 -mt-[4.5rem] z-10 sm:-mt[8.5rem] lg:-mt-[17.5rem] md:-mt-[10.5rem]">
+      <div className="flex flex-col items-center bg-transparent relative p-3 gap-2 -mt-[1.5rem] z-10 sm:-mt[8.5rem] lg:-mt-[17.5rem] md:-mt-[2.5rem]">
         <CardGroup />
         <TodaysDeals prods={props.smartphones.slice(0, 6)} />
         <CardGroup />

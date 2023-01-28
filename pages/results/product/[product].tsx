@@ -14,24 +14,33 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const productColRef = collection(db, "products");
   const q = query(productColRef, where("name", "==", prodName));
   const querySnap = await getDocs(q);
-  const data = querySnap.docs[0].data() as ProductInfo;
-  const imageRef = ref(storage, `${data.category}/${prodName}.jpg`);
-  const imgUrl = await getDownloadURL(imageRef);
-  const selleruid = data.uid;
-  const sellerNameQuery = query(
-    collection(db, "users"),
-    where("uid", "==", selleruid)
-  );
-  const sellerQuerySnap = await getDocs(sellerNameQuery);
-  const sellerData = sellerQuerySnap.docs[0].data() as UserInterface;
-  const sellerName = sellerData.firstName + " " + sellerData.lastName;
-  return {
-    props: {
-      data,
-      imgUrl,
-      sellerName,
-    },
-  };
+  if (!querySnap.empty) {
+    const data = querySnap.docs[0].data() as ProductInfo;
+    const imageRef = ref(storage, `${data.category}/${prodName}.jpg`);
+    const imgUrl = await getDownloadURL(imageRef);
+    const selleruid = data.uid;
+    const sellerNameQuery = query(
+      collection(db, "users"),
+      where("uid", "==", selleruid)
+    );
+    const sellerQuerySnap = await getDocs(sellerNameQuery);
+    const sellerData = sellerQuerySnap.docs[0].data() as UserInterface;
+    const sellerName = sellerData.firstName + " " + sellerData.lastName;
+    return {
+      props: {
+        data,
+        imgUrl,
+        sellerName,
+      },
+    };
+  } else {
+    const obj = new Object();
+    return {
+      props: {
+        obj,
+      },
+    };
+  }
 };
 
 export default function (props: {
@@ -40,7 +49,17 @@ export default function (props: {
   cartItems: ProductInfo[];
   imgUrl: string;
   sellerName: string;
+  obj?: Object;
 }) {
+  if (props.obj) {
+    return (
+      <div className="grid place-items-center min-h-[20rem]">
+        <h1 className="text-2xl font-emberBd">
+          Sorry, this product is not available
+        </h1>
+      </div>
+    );
+  }
   const [toastShow, settoastShow] = useState(false);
   return (
     <div>

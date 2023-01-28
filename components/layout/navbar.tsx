@@ -1,4 +1,7 @@
-import { handleAuthChange } from "../../utils/functions";
+import {
+  handleAuthChange,
+  validProductCategories,
+} from "../../utils/functions";
 import React, { useEffect, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import amazonLogo from "../../public/assets/navbar/amazon_logo.png";
@@ -17,29 +20,24 @@ import { useRouter } from "next/router";
 import { Url } from "url";
 export default function Navbar({ cartItems }: { cartItems: number }) {
   const [nav2Show, setnav2Show] = useState(true);
-  const [allBtnShow, setallBtnShow] = useState(false);
   useEffect(() => {
     if (window.innerWidth <= 810) {
       setnav2Show(false);
-      setallBtnShow(true);
     }
   }, []);
   return (
     <>
-      <nav className="flex bg-amznDarkBlue text-white text-xs sm:text-base gap-2 justify-between items-center p-2 flex-col lg:flex-row">
+      <nav className="flex bg-amznDarkBlue text-white text-xs sm:text-base gap-2 justify-between items-center p-2 flex-col lg:flex-row z-20">
         <Logo_Address />
         <Searchbar />
         <div className="flex justify-between shrink-0 gap-2 ">
-          {allBtnShow ? (
-            <All setnav2Show={setnav2Show} nav2Show={nav2Show} />
-          ) : null}
           <Lang indiaFlag={indiaFlag} />
           <SignIn />
           <ReturnsOrders />
           <Cart cartItems={cartItems} cart={cart} />
         </div>
       </nav>
-      {nav2Show ? <Nav2 /> : null}
+      {nav2Show && <Nav2 />}
     </>
   );
 }
@@ -76,11 +74,19 @@ function Searchbar() {
           (e.target as HTMLFormElement).elements as NavSearch
         ).search.value;
         if (searchQuery) {
-          const url = `/results/${searchQuery}` as unknown as Url;
-          router.push(url);
+          if (validProductCategories.includes(searchQuery)) {
+            const url = `/results/${searchQuery}` as unknown as Url;
+            router.push(url);
+          } else {
+            const url = `/results/product/${searchQuery.replaceAll(
+              " ",
+              "-"
+            )}` as unknown as Url;
+            router.push(url);
+          }
           formRef.current.reset();
         } else {
-          alert("Please enter a valid category");
+          alert("Please enter a valid search query");
         }
       }}
       className="flex justify-between text-black h-10 lg:m-0 my-2 focus-within:outline outline-[3px] outline-orange-400 rounded w-full"
@@ -265,6 +271,7 @@ function SignIn() {
         content={<SignInModal usertype={usrType} />}
         placement="bottom"
         style="light"
+        className="z-30"
       >
         <button className="flex flex-col text-left hover:outline outline-1 rounded-[2px] py-1 px-2">
           <div className="text-xs">{`Hello, ${
@@ -340,7 +347,7 @@ function SignInModal({ usertype }: { usertype: string }) {
     })();
   });
   return (
-    <div className="flex flex-col gap-2 text-emberRg text-xs text-black p-2">
+    <div className="flex flex-col gap-2 text-emberRg text-xs text-black p-2 z-30">
       <div className="flex flex-col justify-center items-center gap-2 ">
         {auth.currentUser === null ? (
           <div className="flex flex-col gap-2 items-center justify-center">
@@ -478,7 +485,7 @@ function SignInModal({ usertype }: { usertype: string }) {
 
 function LanguageSelectModal() {
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="flex flex-col gap-2 p-2 z-30">
       <form action="" method="post">
         <div className="flex gap-2">
           <input type="radio" id="english" name="language" value="english" />
@@ -532,8 +539,13 @@ function LanguageSelectModal() {
 
 function Lang({ indiaFlag }: { indiaFlag: StaticImageData }) {
   return (
-    <Tooltip content={<LanguageSelectModal />} placement="bottom" style="light">
-      <button className="gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2 min-[450px]:flex hidden">
+    <Tooltip
+      content={<LanguageSelectModal />}
+      placement="bottom"
+      style="light"
+      className="z-30"
+    >
+      <button className="gap-2 items-center hover:outline outline-1 rounded-[2px] pt-4 px-2 flex">
         <Image src={indiaFlag} alt="flag" className="w-auto h-3 " />
         <div className="flex gap-1 font-emberBd text-sm">
           EN
@@ -570,28 +582,6 @@ function ReturnsOrders() {
     <button className="flex flex-col hover:outline text-left outline-1 rounded-[2px] py-1 px-2">
       <div className="text-xs">Returns</div>
       <div className="font-emberBd sm:text-sm text-xs">& Orders</div>
-    </button>
-  );
-}
-
-function All({
-  nav2Show,
-  setnav2Show,
-}: {
-  nav2Show: boolean;
-  setnav2Show: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  return (
-    <button
-      className="hover:outline outline-1 rounded-[2px] flex gap-2 items-center px-2"
-      onClick={() => setnav2Show(!nav2Show)}
-    >
-      <div className="flex flex-col gap-1">
-        <hr className="bg-white w-4 h-[0.1rem]" />
-        <hr className="bg-white w-4 h-[0.1rem]" />
-        <hr className="bg-white w-4 h-[0.1rem]" />
-      </div>
-      <p className="font-emberBd">All</p>
     </button>
   );
 }
