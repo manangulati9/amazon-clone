@@ -2,7 +2,7 @@
 
 This is an Amazon clone web app built with Typescript React
 
-Live Demo - [Amazon Clone](https://amazon-clone-jkc5hot50-manangulati9.vercel.app/)
+Live Demo - [Amazon Clone](https://amazon-clone-delta-plum.vercel.app/)
 
 ## Tech stack
 
