@@ -26,6 +26,8 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { Button, buttonVariants } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 export function Navbar({ userData }: { userData: User | null }) {
   const [language, setLanguage] = useState("english")
@@ -120,7 +122,7 @@ export function Navbar({ userData }: { userData: User | null }) {
             <PopoverTrigger className="flex px-1 text-left rounded outline-1 hover:outline">
               <div className="flex flex-col py-1 px-1 h-fit">
                 <div className="text-xs">
-                  {isSignedIn ? user?.name : "Hello, sign in"}
+                  {isSignedIn ? `Hi, ${user?.name?.split(" ")[0]}` : "Hello, sign in"}
                 </div>
                 <div className="flex items-center text-xs font-bold sm:text-sm">
                   Account &amp; lists
@@ -128,27 +130,21 @@ export function Navbar({ userData }: { userData: User | null }) {
                 </div>
               </div>
             </PopoverTrigger>
-            <PopoverContent>
-              <div className="flex z-30 flex-col gap-2 p-2 text-xs text-foreground">
+            <PopoverContent className="text-nowrap w-fit">
+              <div className="p-2 space-y-2 text-xs">
                 <div className="flex flex-col gap-2 justify-center items-center">
                   {!isSignedIn ? (
-                    <div className="flex flex-col gap-2 justify-center items-center">
-                      <div className="flex gap-3 justify-center items-center">
-                        <Link href="/user/login">
-                          <button className="py-1.5 px-2 text-sm bg-gradient-to-t from-yellow-300 to-yellow-100 rounded border border-orange-300 hover:to-yellow-200">
-                            Sign in as customer
-                          </button>
-                        </Link>
-                        <Link href="/seller/login">
-                          <button className="py-1.5 px-2 text-sm bg-gradient-to-t from-yellow-300 to-yellow-100 rounded border border-orange-300 hover:to-yellow-200">
-                            Sign in as seller
-                          </button>
-                        </Link>
-                      </div>
+                    <div className="flex flex-col w-full gap-2 justify-center items-center">
+                      <Link className={buttonVariants({
+                        variant: "default",
+                        className: "w-full h-8"
+                      })} href="/auth/login">
+                        Sign in
+                      </Link>
                       <p>
-                        New Customer?{" "}
+                        New user?{" "}
                         <Link
-                          href="/user/sign-up"
+                          href="/auth/sign-up"
                           className="text-blue-600 hover:underline"
                         >
                           Start here
@@ -156,108 +152,80 @@ export function Navbar({ userData }: { userData: User | null }) {
                       </p>
                     </div>
                   ) : (
-                    <button
-                      onClick={async () => {
-                        try {
-                          await signOut();
-                        } catch (error) {
-                          alert("An error has occured");
-                          console.log(error);
-                        }
-                      }}
-                      className="py-1.5 px-2 text-sm bg-gradient-to-t from-yellow-300 to-yellow-100 rounded border border-orange-300 hover:to-yellow-200"
-                    >
+                    <Button onClick={async () => await signOut()} className="w-full">
                       Sign out
-                    </button>
+                    </Button>
                   )}
                 </div>
-                <div className="bg-gray-400 border"></div>
-                <div className="flex gap-5 justify-around">
-                  <div className="flex flex-col gap-2">
-                    <h3 className="mb-2 text-base font-emberBd">Your lists</h3>
+                <Separator className="h-[2px] bg-muted/10" />
+                <div className="flex justify-between">
+                  <div className="space-y-2">
+                    <h3 className="text-base font-emberBd">Your lists</h3>
                     <Link
                       href=""
-                      className="block hover:underline hover:text-amznOrange-100"
+                      className="block hover:underline"
                     >
                       Create a Wish List
                     </Link>
                     <Link
                       href=""
-                      className="block hover:underline hover:text-amznOrange-100"
+                      className="block hover:underline"
                     >
-                      Wish from Any Website
+                      Wishlist
                     </Link>
                     <Link
                       href=""
-                      className="block hover:underline hover:text-amznOrange-100"
+                      className="block hover:underline"
                     >
                       Baby Wishlist
                     </Link>
                     <Link
                       href=""
-                      className="block hover:underline hover:text-amznOrange-100"
+                      className="block hover:underline"
                     >
                       Discover Your Style
                     </Link>
                     <Link
                       href=""
-                      className="block hover:underline hover:text-amznOrange-100"
+                      className="block hover:underline"
                     >
                       Explore Showroom
                     </Link>
                   </div>
-                  <div className="ml-10 bg-gray-400 border"></div>
+                  <div className="border border-muted/10 mx-4" />
                   <div className="flex flex-col gap-2">
-                    <h3 className="mb-1 text-base font-emberBd">Your Account</h3>
+                    <h3 className="text-base font-emberBd">Your Account</h3>
                     <Link
                       href={
                         userData?.type === "CUSTOMER" ? "/user/dashboard" : "/seller/dashboard"
                       }
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
+                      className="block text-xs hover:underline"
                     >
                       Your Account
                     </Link>
                     <Link
                       href=""
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
+                      className="block text-xs hover:underline"
                     >
                       Your Orders
                     </Link>
                     <Link
                       href=""
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
+                      className="block text-xs hover:underline"
                     >
                       Your Wish List
                     </Link>
                     <Link
                       href=""
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
+                      className="block text-xs hover:underline"
                     >
                       Your Recommendations
                     </Link>
                     <Link
                       href=""
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
+                      className="block text-xs hover:underline"
                     >
                       Your Prime Membership
-                    </Link>
-                    <Link
-                      href="/seller/dashboard"
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
-                    >
-                      Your Seller Account
-                    </Link>
-                    <Link
-                      href={userData?.type === "SELLER" ? "/seller/dashboard" : "/seller/login"}
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
-                    >
-                      Manage Your Content and
-                    </Link>
-                    <Link
-                      href=""
-                      className="block text-xs hover:underline hover:text-amznOrange-100"
-                    >
-                      Devices
                     </Link>
                   </div>
                 </div>
@@ -283,20 +251,22 @@ export function Navbar({ userData }: { userData: User | null }) {
             <div className="self-end text-xs font-bold sm:text-sm">Cart</div>
           </Link>
         </div>
-      </nav>
+      </nav >
 
       {/* Secondary navbar */}
-      <div className="hidden flex-wrap justify-around py-1 px-3 lg:flex bg-secondary text-secondary-foreground">
+      < div className="hidden flex-wrap justify-around py-1 px-3 lg:flex bg-secondary text-secondary-foreground" >
         <button className="flex gap-1 items-center py-1 px-2 text-xs font-bold rounded sm:text-sm outline-1 hover:outline">
           <Menu className="w-4 h-4" />
           <span>All</span>
         </button>
-        {NAVBAR_ITEMS.map((item) => (
-          <button key={item} className="py-1 px-2 text-xs rounded sm:text-sm outline-1 hover:outline">
-            {item}
-          </button>
-        ))}
-      </div>
+        {
+          NAVBAR_ITEMS.map((item) => (
+            <button key={item} className="py-1 px-2 text-xs rounded sm:text-sm outline-1 hover:outline">
+              {item}
+            </button>
+          ))
+        }
+      </div >
     </>
   );
 }
