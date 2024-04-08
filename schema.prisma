@@ -21,7 +21,7 @@ datasource db {
 }
 
 model Product {
-  id          String          @id @default(cuid())
+  id          String          @id
   name        String
   description String
   category    ProductCategory

@@ -1,4 +1,5 @@
 "use client";
+
 import { AspectRatio } from "@ui/aspect-ratio";
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
@@ -62,8 +63,38 @@ export function Navbar() {
               <Menu className="self-center w-6 h-6 lg:hidden" />
             </SheetTrigger>
             <SheetContent>
-              <div>
-                <h3>All categories</h3>
+              <div className="space-y-4 text-sm">
+                <h3 className="text-2xl font-bold">
+                  {isSignedIn
+                    ? `Hi, ${user?.name?.split(" ")[0]}`
+                    : "Hello, sign in"}
+                </h3>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold">Categories</h3>
+                  <div className="space-y-1">
+                    {PRODUCT_CATEGORIES.slice(0, 15).map((cat) => (
+                      <p key={cat.value}>{cat.label}</p>
+                    ))}
+                  </div>
+                </div>
+                {isSignedIn ? (
+                  <Button
+                    onClick={async () => await signOut()}
+                    className="w-full"
+                  >
+                    Sign out
+                  </Button>
+                ) : (
+                  <Link
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full h-8",
+                    })}
+                    href="/auth/login"
+                  >
+                    Sign in
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>

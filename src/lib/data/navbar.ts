@@ -60,16 +60,16 @@ export const POPOVER_LINK_ITEMS = [
 	{
 		title: "Your lists",
 		items: [
-			{ label: "Create a List", href: "#" },
+			{ label: "Create a List", href: "/dashboard/wishlist?create-list=true" },
 			{ label: "Find a list or registry", href: "#" },
 		],
 	},
 	{
 		title: "Your account",
 		items: [
-			{ label: "Account", href: "#" },
-			{ label: "Orders", href: "#" },
-			{ label: "Wishlist", href: "#" },
+			{ label: "Account", href: "/dashboard" },
+			{ label: "Orders", href: "/dashboard/orders" },
+			{ label: "Wishlist", href: "/dashboard/wishlist" },
 			{ label: "Recommendations", href: "#" },
 			{ label: "Prime Membership", href: "#" },
 		],

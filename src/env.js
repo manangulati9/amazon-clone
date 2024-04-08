@@ -32,8 +32,6 @@ export const env = createEnv({
 		GOOGLE_CLIENT_SECRET: z.string(),
 		MAIL_ID: z.string(),
 		MAIL_PASSWORD: z.string(),
-		UNSPLASH_ACCESS_KEY: z.string(),
-		UNSPLASH_SECRET_KEY: z.string(),
 	},
 
 	/**
@@ -58,8 +56,6 @@ export const env = createEnv({
 		GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 		MAIL_ID: process.env.MAIL_ID,
 		MAIL_PASSWORD: process.env.MAIL_PASSWORD,
-		UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,
-		UNSPLASH_SECRET_KEY: process.env.UNSPLASH_SECRET_KEY,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

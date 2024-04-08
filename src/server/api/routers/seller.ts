@@ -1,14 +1,19 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { ProductModel } from "@/zod";
+import { addProductFormSchema } from "@/zod/custom";
+import { nanoid } from "nanoid";
 
 export const sellerRouter = createTRPCRouter({
-	addProducts: protectedProcedure
-		.input(z.array(ProductModel))
+	addProduct: protectedProcedure
+		.input(addProductFormSchema)
 		.mutation(async ({ ctx, input }) => {
-			await ctx.db.product.createMany({
-				data: input,
-				skipDuplicates: true,
+			await ctx.db.product.create({
+				data: {
+					...input,
+					id: `PID-${nanoid(14)}`,
+					createdById: ctx.user.id,
+				},
 			});
 		}),
 
