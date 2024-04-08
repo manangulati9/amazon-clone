@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="text-background">
       <Link href="#" className="block py-3 text-sm text-center align-bottom bg-muted hover:bg-muted/90">Back to top</Link>
-      <div className="bg-secondary grid place-content-center">
+      <div className="bg-secondary grid place-content-center py-6">
         <div className="grid grid-cols-2 md:flex gap-4 py-4 px-4 md:px-8 bg-secondary">
           <div className="px-2 md:px-8">
             <h2 className="font-bold">Get To Know Us</h2>

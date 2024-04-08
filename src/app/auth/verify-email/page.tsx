@@ -5,9 +5,9 @@ import { Suspense } from "react";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const email = searchParams.mailId
+  const email = searchParams.mailId;
 
   return (
     <div className="my-8">
@@ -15,16 +15,18 @@ export default async function Page({
         <PendingVerification email={email} />
       </Suspense>
     </div>
-  )
+  );
 }
 
 function LoadingSkeleton() {
-  return <>
-    <Skeleton className="w-[350px] h-[200px]" />
-    <div className="pt-5 max-w-xl space-y-2">
-      <Skeleton className="h-8 w-full" />
-      <Skeleton className="h-12 w-full" />
-      <Skeleton className="h-8 w-[10rem]" />
-    </div>
-  </>
+  return (
+    <>
+      <Skeleton className="w-[350px] h-[200px]" />
+      <div className="pt-5 space-y-2 max-w-xl">
+        <Skeleton className="w-full h-8" />
+        <Skeleton className="w-full h-12" />
+        <Skeleton className="h-8 w-[10rem]" />
+      </div>
+    </>
+  );
 }

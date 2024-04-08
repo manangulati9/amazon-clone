@@ -1,16 +1,11 @@
-'use client'
+"use client";
 
 import { Separator } from "@/app/_components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@ui/label"
-import { RadioGroup, RadioGroupItem } from "@ui/radio-group"
+import { Label } from "@ui/label";
+import { RadioGroup, RadioGroupItem } from "@ui/radio-group";
 import { Button, buttonVariants } from "@ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import {
   Form,
   FormControl,
@@ -27,8 +22,8 @@ import { signUpFormSchema, type TSignUpForm } from "@/zod/custom";
 import { getBaseUrl } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-export default function() {
-  const router = useRouter()
+export default function Page() {
+  const router = useRouter();
   const form = useForm<TSignUpForm>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
@@ -36,23 +31,25 @@ export default function() {
       email: "",
       password: "",
       confirmPassword: "",
-      accountType: "CUSTOMER"
-    }
-  })
+      accountType: "CUSTOMER",
+    },
+  });
 
   const onSuccess = async () => {
     await fetch(`${getBaseUrl()}/api/send_email`, {
-      method: 'POST',
-      body: JSON.stringify({ email: form.getValues("email") })
-    })
-    router.push("/auth/mail-sent")
-  }
+      method: "POST",
+      body: JSON.stringify({ email: form.getValues("email") }),
+    });
+    router.push("/auth/mail-sent");
+  };
 
-  const { mutate, isPending } = api.customer.createAccount.useMutation({ onSuccess })
+  const { mutate, isPending } = api.customer.createAccount.useMutation({
+    onSuccess,
+  });
 
   const onSubmit = (values: TSignUpForm) => {
-    mutate(values)
-  }
+    mutate(values);
+  };
 
   return (
     <>
@@ -95,7 +92,11 @@ export default function() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Choose account type</FormLabel>
-                    <RadioGroup value={field.value} className="flex gap-2" onValueChange={field.onChange}>
+                    <RadioGroup
+                      value={field.value}
+                      className="flex gap-2"
+                      onValueChange={field.onChange}
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="CUSTOMER" id="CUSTOMER" />
                         <Label htmlFor="CUSTOMER">Customer</Label>
@@ -116,7 +117,11 @@ export default function() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Min. 8 characters" {...field} type="password" />
+                      <Input
+                        placeholder="Min. 8 characters"
+                        {...field}
+                        type="password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,7 +134,11 @@ export default function() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Re-enter your password" {...field} type="password" />
+                      <Input
+                        placeholder="Re-enter your password"
+                        {...field}
+                        type="password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -139,11 +148,15 @@ export default function() {
                 {isPending ? "Submitting..." : "Submit"}
               </Button>
               <div>
-                <span>By continuing, you agree to Amazon&apos;s{" "}</span>
-                <Button variant="link" className="p-0 text-xs h-fit">Condition of Use</Button>
-                <span>{" "}and{" "}</span>
+                <span>By continuing, you agree to Amazon&apos;s </span>
+                <Button variant="link" className="p-0 text-xs h-fit">
+                  Condition of Use
+                </Button>
+                <span> and </span>
                 <br />
-                <Button variant="link" className="p-0 text-xs h-fit">Privacy Notice.</Button>
+                <Button variant="link" className="p-0 text-xs h-fit">
+                  Privacy Notice.
+                </Button>
               </div>
             </form>
           </Form>
@@ -154,10 +167,15 @@ export default function() {
           <Separator className="flex-1" />
         </div>
       </Card>
-      <Link href="/auth/login" className={buttonVariants({
-        className: "h-8 relative w-[20rem] top-4",
-        variant: "outline"
-      })}>Sign in</Link>
+      <Link
+        href="/auth/login"
+        className={buttonVariants({
+          className: "h-8 relative w-[20rem] top-4",
+          variant: "outline",
+        })}
+      >
+        Sign in
+      </Link>
     </>
   );
 }

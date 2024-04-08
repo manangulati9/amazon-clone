@@ -1,15 +1,9 @@
-'use client'
+"use client";
 import { Separator } from "@/app/_components/ui/separator";
-import { TLoginForm, loginFormSchema } from "@/zod/custom";
+import { type TLoginForm, loginFormSchema } from "@/zod/custom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, buttonVariants } from "@ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/card";
 import {
   Form,
   FormControl,
@@ -25,21 +19,21 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
 
-export default function() {
+export default function Page() {
   const form = useForm<TLoginForm>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
-      password: ""
-    }
-  })
+      password: "",
+    },
+  });
   const router = useRouter();
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: TLoginForm) => {
-    await signIn("credentials", { ...values, redirect: false })
-    router.push("/")
-  }
+    await signIn("credentials", { ...values, redirect: false });
+    router.push("/");
+  };
 
   return (
     <>
@@ -80,11 +74,15 @@ export default function() {
                 {isLoading ? "Submitting..." : "Submit"}
               </Button>
               <div>
-                <span>By continuing, you agree to Amazon&apos;s{" "}</span>
-                <Button variant="link" className="p-0 text-xs h-fit">Condition of Use</Button>
-                <span>{" "}and{" "}</span>
+                <span>By continuing, you agree to Amazon&apos;s </span>
+                <Button variant="link" className="p-0 text-xs h-fit">
+                  Condition of Use
+                </Button>
+                <span> and </span>
                 <br />
-                <Button variant="link" className="p-0 text-xs h-fit">Privacy Notice.</Button>
+                <Button variant="link" className="p-0 text-xs h-fit">
+                  Privacy Notice.
+                </Button>
               </div>
             </form>
           </Form>
@@ -95,13 +93,15 @@ export default function() {
           <Separator className="flex-1" />
         </div>
         <CardFooter className="block">
-          <Button variant="outline" onClick={async () => {
-            await signIn("google");
-          }} className="flex gap-1 w-full">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              await signIn("google");
+            }}
+            className="flex gap-1 w-full"
+          >
             <FaGoogle className="w-4 h-4" />
-            <span>
-              Sign in
-            </span>
+            <span>Sign in</span>
           </Button>
         </CardFooter>
         <div className="flex absolute -bottom-6 gap-2 items-center w-full">
@@ -110,10 +110,15 @@ export default function() {
           <Separator className="flex-1" />
         </div>
       </Card>
-      <Link href="/auth/sign-up" className={buttonVariants({
-        className: "h-8 w-[20rem] relative top-4",
-        variant: "outline"
-      })}>Create your account</Link>
+      <Link
+        href="/auth/sign-up"
+        className={buttonVariants({
+          className: "h-8 w-[20rem] relative top-4",
+          variant: "outline",
+        })}
+      >
+        Create your account
+      </Link>
     </>
   );
 }
