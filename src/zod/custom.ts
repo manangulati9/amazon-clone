@@ -25,7 +25,7 @@ export type TLoginForm = z.infer<typeof loginFormSchema>;
 
 export const addProductFormSchema = z.object({
 	name: z.string().min(5, "Min. 5 characters are required"),
-	description: z.string().min(10, "Min. 10 characters are required"),
+	description: z.string().min(50, "Min. 50 characters are required"),
 	category: z.nativeEnum(ProductCategory),
 	price: z.coerce
 		.number()

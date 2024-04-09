@@ -43,7 +43,7 @@ export default function Page() {
     router.push("/auth/mail-sent");
   };
 
-  const { mutate, isPending } = api.customer.createAccount.useMutation({
+  const { mutate, isPending } = api.common.createAccount.useMutation({
     onSuccess,
   });
 

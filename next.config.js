@@ -5,17 +5,10 @@
 await import("./src/env.js");
 
 const config = {
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "source.unsplash.com",
-        port: "",
-        pathname: "/**",
-      },
-    ],
-  },
+	reactStrictMode: true,
+	images: {
+		remotePatterns: [{ hostname: "gtsqetcjzlgmnjxsbmns.supabase.co" }],
+	},
 };
 
 export default config;

@@ -1,7 +1,6 @@
 "use client";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -9,7 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@ui/drawer";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,37 +32,43 @@ import {
   SelectValue,
 } from "../ui/select";
 import { PRODUCT_CATEGORIES } from "@/lib/data/navbar";
+import ImageUpload from "./ImageUpload";
+import { revalidate } from "@/lib/actions";
 
 export function AddProduct() {
   const form = useForm<TAddProductForm>({
     resolver: zodResolver(addProductFormSchema),
     defaultValues: {
       name: "",
-      category: "Appliance",
       images: [],
       description: "",
-      price: 0,
+      price: 2000,
     },
   });
 
-  const onSuccess = async () => {};
+  const onSuccess = () => {
+    revalidate("/dashboard");
+  };
 
   const { mutate, isPending } = api.seller.addProduct.useMutation({
     onSuccess,
   });
 
   const onSubmit = (values: TAddProductForm) => {
-    // mutate(values);
-    // TODO: Complete onSubmit
+    mutate(values);
   };
 
   return (
     <Drawer>
-      <DrawerTrigger>
-        <Button variant="outline" className="space-x-2 h-8">
-          <PlusCircledIcon className="size-4" />
-          <span>Add item</span>
-        </Button>
+      <DrawerTrigger
+        className={buttonVariants({
+          variant: "outline",
+          className: "space-x-2",
+          size: "sm",
+        })}
+      >
+        <PlusCircledIcon className="size-4" />
+        <span>Add item</span>
       </DrawerTrigger>
       <DrawerContent className="container">
         <div>
@@ -77,7 +82,7 @@ export function AddProduct() {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col space-y-4"
+              className="block grid-cols-2 gap-2 lg:grid"
             >
               <FormField
                 control={form.control}
@@ -86,7 +91,7 @@ export function AddProduct() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input placeholder="Your product name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,14 +134,35 @@ export function AddProduct() {
               />
               <FormField
                 control={form.control}
+                name="images"
+                render={() => (
+                  <FormItem className="row-span-2">
+                    <div>
+                      <FormLabel>
+                        Uplod images{" "}
+                        <span className="text-muted-foreground">
+                          (max 5 images)
+                        </span>
+                      </FormLabel>
+                    </div>
+                    <ImageUpload />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Product description</FormLabel>
-                    <Textarea
-                      className="min-h-[8rem] lg:min-h-[15rem]"
-                      {...field}
-                    />
+                    <FormControl>
+                      <Textarea
+                        className="min-h-[8rem] lg:min-h-[15rem]"
+                        placeholder="Your prodcut's description goes here..."
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

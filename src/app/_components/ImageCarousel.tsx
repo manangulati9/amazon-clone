@@ -13,6 +13,7 @@ import {
   DESKTOP_CAROUSEL_IMAGES,
   MOBILE_CAROUSEL_IMAGES,
 } from "@/lib/data/home-page";
+import Autoplay from "embla-carousel-autoplay";
 
 export function ImageCarousel() {
   return (
@@ -20,6 +21,11 @@ export function ImageCarousel() {
       {/* Desktop Carousel */}
       <Carousel
         className="hidden relative w-full lg:block"
+        plugins={[
+          Autoplay({
+            delay: 3000,
+          }),
+        ]}
         opts={{ loop: true }}
       >
         <CarouselContent className="">

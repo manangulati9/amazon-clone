@@ -4,25 +4,14 @@ import { AspectRatio } from "@ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonVariants } from "../_components/ui/button";
-import { db } from "@/server/db";
 import { ImageCarousel } from "../_components/ImageCarousel";
+import { api } from "@/trpc/server";
 
 export default async function Page() {
-  const todays_deals = await db.product.findMany({
-    take: 6,
-    where: {
-      images: {
-        isEmpty: false,
-      },
-    },
-  });
-
-  const top_smartphones = await db.product.findMany({
-    take: 6,
-    where: {
-      category: "Mobile",
-    },
-  });
+  const [todays_deals, top_smartphones] = await Promise.all([
+    api.customer.todaysDeals(),
+    api.customer.topSmartphones(),
+  ]);
 
   return (
     <div className="container p-4">
@@ -64,7 +53,7 @@ export default async function Page() {
                   href="#"
                   className={buttonVariants({
                     variant: "link",
-                    className: "px-0",
+                    size: "link",
                   })}
                 >
                   See more
@@ -82,10 +71,7 @@ export default async function Page() {
           <CardContent>
             <div className="flex flex-wrap gap-4">
               {todays_deals.map((item, ind) => (
-                <div
-                  key={ind}
-                  className="flex-1 space-y-1 aspect-square min-w-[70px] lg:min-w-[100px]"
-                >
+                <div key={ind} className="space-y-1 max-w-[200px]">
                   <AspectRatio ratio={1 / 1}>
                     <Image
                       src={item.images[0]!}
@@ -104,7 +90,7 @@ export default async function Page() {
               href=""
               className={buttonVariants({
                 variant: "link",
-                className: "w-fit px-0",
+                size: "link",
               })}
             >
               See More
@@ -147,7 +133,7 @@ export default async function Page() {
                   href="#"
                   className={buttonVariants({
                     variant: "link",
-                    className: "px-0",
+                    size: "link",
                   })}
                 >
                   See more
@@ -187,7 +173,7 @@ export default async function Page() {
               href=""
               className={buttonVariants({
                 variant: "link",
-                className: "px-0 w-fit",
+                size: "link",
               })}
             >
               See More
