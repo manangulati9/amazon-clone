@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider              = "zod-prisma"
+  output                = "./src/zod"
+  relationModel         = true
+  modelCase             = "PascalCase"
+  modelSuffix           = "Model"
+  useDecimalJs          = true
+  prismaJsonNullability = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String          @id
+  name        String
+  description String
+  category    ProductCategory
+  price       Float
+  images      String[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  createdBy   User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  verified  Boolean
+  pw_hash   String?
+  image     String?
+  type      UserType
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum UserType {
+  CUSTOMER
+  SELLER
+}
+
+enum ProductCategory {
+  Mobile
+  Computer
+  TV
+  Appliance
+  Electronic
+  Mens_Fashion
+  Womens_Fashion
+  Home
+  Kitchen
+  Pet
+  Beauty
+  Health
+  Grocery
+  Sports
+  Fitness
+  Bag
+  Luggage
+  Toy
+  Baby_Product
+  Kids_Fashion
+  Car
+  Motorbike
+  Industrial
+  Book
+  Movie
+  Music
+  Video_Game
+}
