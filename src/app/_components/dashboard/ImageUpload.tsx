@@ -12,102 +12,102 @@ import { useFormContext } from "react-hook-form";
 const supabaseStorageURL = `${env.NEXT_PUBLIC_SUPABASE_PROJECT_URL}/storage/v1/upload/resumable`;
 
 const uppyOpts = {
-  restrictions: { minNumberOfFiles: 1, maxNumberOfFiles: 5 },
+	restrictions: { minNumberOfFiles: 1, maxNumberOfFiles: 5 },
 };
 
 const tusOpts = {
-  endpoint: supabaseStorageURL,
-  headers: {
-    authorization: `Bearer ${env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-    apikey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  },
-  uploadDataDuringCreation: true,
-  chunkSize: 2 * 1024 * 1024,
-  allowedMetaFields: [
-    "bucketName",
-    "objectName",
-    "contentType",
-    "cacheControl",
-  ],
+	endpoint: supabaseStorageURL,
+	headers: {
+		authorization: `Bearer ${env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+		apikey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+	},
+	uploadDataDuringCreation: true,
+	chunkSize: 2 * 1024 * 1024,
+	allowedMetaFields: [
+		"bucketName",
+		"objectName",
+		"contentType",
+		"cacheControl",
+	],
 };
 
 export default function ImageUpload() {
-  const { data: session } = useSession();
+	const { data: session } = useSession();
+	const [uppyMobile] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
+	const [uppyTablet] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
+	const [uppyDesktop] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
+	const { setValue } = useFormContext();
+	const supabase = createClient();
 
-  if (!session) {
-    return;
-  }
+	useEffect(() => {
+		handleUpload(uppyMobile);
+		handleUpload(uppyTablet);
+		handleUpload(uppyDesktop);
+	}, []);
 
-  const folder = session.user.id;
-  const [uppyMobile] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
-  const [uppyTablet] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
-  const [uppyDesktop] = useState(() => new Uppy(uppyOpts).use(Tus, tusOpts));
-  const { setValue } = useFormContext();
-  const supabase = createClient();
+	if (!session) {
+		return;
+	}
 
-  const handleUpload = (uppy: Uppy) => {
-    const filePaths: string[] = [];
+	const folder = session.user.id;
 
-    uppy.on("file-added", (file) => {
-      const formattedFileName = file.name.toLowerCase().replace(/\s+/g, "-");
-      const supabaseMetadata = {
-        bucketName: "products",
-        objectName: folder
-          ? `${folder}/${formattedFileName}`
-          : formattedFileName,
-        contentType: file.type,
-      };
+	const handleUpload = (uppy: Uppy) => {
+		const filePaths: string[] = [];
 
-      file.meta = {
-        ...file.meta,
-        ...supabaseMetadata,
-      };
+		uppy.on("file-added", (file) => {
+			const formattedFileName = file.name.toLowerCase().replace(/\s+/g, "-");
+			const supabaseMetadata = {
+				bucketName: "products",
+				objectName: folder
+					? `${folder}/${formattedFileName}`
+					: formattedFileName,
+				contentType: file.type,
+			};
 
-      filePaths.push(supabaseMetadata.objectName);
-    });
+			file.meta = {
+				...file.meta,
+				...supabaseMetadata,
+			};
 
-    uppy.on("complete", (result) => {
-      if (result.successful) {
-        const imageURLs = filePaths.map(
-          (path) =>
-            supabase.storage.from("products").getPublicUrl(path).data.publicUrl,
-        );
+			filePaths.push(supabaseMetadata.objectName);
+		});
 
-        setValue("images", imageURLs);
-      }
-    });
-  };
+		uppy.on("complete", (result) => {
+			if (result.successful) {
+				const imageURLs = filePaths.map(
+					(path) =>
+						supabase.storage.from("products").getPublicUrl(path).data.publicUrl,
+				);
 
-  useEffect(() => {
-    handleUpload(uppyMobile);
-    handleUpload(uppyTablet);
-    handleUpload(uppyDesktop);
-  }, []);
+				setValue("images", imageURLs);
+			}
+		});
+	};
 
-  return (
-    <>
-      <Dashboard
-        id="uppyMobile"
-        className="md:hidden"
-        uppy={uppyMobile}
-        height={150}
-        style={{ height: "100%" }}
-        showProgressDetails
-      />
-      <Dashboard
-        id="uppyTablet"
-        className="hidden md:max-lg:block"
-        uppy={uppyTablet}
-        height={210}
-        showProgressDetails
-      />
-      <Dashboard
-        id="uppyDesktop"
-        className="hidden lg:block"
-        uppy={uppyDesktop}
-        height={320}
-        showProgressDetails
-      />
-    </>
-  );
+	return (
+		<>
+			<Dashboard
+				id="uppyMobile"
+				className="md:hidden"
+				uppy={uppyMobile}
+				height={150}
+				style={{ height: "100%" }}
+				showProgressDetails
+			/>
+			<Dashboard
+				id="uppyTablet"
+				className="hidden md:max-lg:block"
+				uppy={uppyTablet}
+				height={210}
+				showProgressDetails
+			/>
+			<Dashboard
+				id="uppyDesktop"
+				className="hidden lg:block"
+				uppy={uppyDesktop}
+				height={320}
+				showProgressDetails
+			/>
+		</>
+	);
 }
