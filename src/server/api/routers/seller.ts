@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { ProductModel } from "@/zod";
 import { addProductFormSchema } from "@/zod/custom";
 import { nanoid } from "nanoid";
+import { createClient } from "@/lib/supabase/server";
 
 export const sellerRouter = createTRPCRouter({
 	addProduct: protectedProcedure
@@ -28,16 +29,26 @@ export const sellerRouter = createTRPCRouter({
 	}),
 
 	deleteProducts: protectedProcedure
-		.input(z.array(z.string()))
+		.input(z.array(z.object({ id: z.string(), images: z.array(z.string()) })))
 		.mutation(async ({ ctx, input }) => {
-			await ctx.db.product.deleteMany({
-				where: {
-					id: {
-						in: input,
+			const paths = input
+				.map((item) =>
+					item.images.map((url) => url.split("/").slice(8).join("/")),
+				)
+				.flat();
+			const supabase = createClient();
+			const idList = input.map((item) => item.id);
+
+			await Promise.all([
+				supabase.storage.from("products").remove(paths),
+				ctx.db.product.deleteMany({
+					where: {
+						id: {
+							in: idList,
+						},
 					},
-				},
-			});
-			// TODO: Add logic to delete stored images from store/bucket
+				}),
+			]);
 		}),
 
 	editProduct: protectedProcedure
