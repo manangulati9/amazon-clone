@@ -27,15 +27,34 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await getServerAuthSession();
+	const session = await getServerAuthSession();
 
-  return {
-    db,
-    session,
-    ...opts,
-  };
+	if (session?.user.email) {
+		const userData = await db.user.findUnique({
+			where: {
+				email: session.user.email,
+				id: session.user.id,
+			},
+		});
+
+		if (!userData) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: "Couldn't fetch user data",
+			});
+		}
+
+		session.user.data = userData;
+	}
+
+	return {
+		db,
+		session,
+		...opts,
+	};
 };
 
+type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 /**
  * 2. INITIALIZATION
  *
@@ -43,18 +62,18 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
+const trpc = initTRPC.context<Context>().create({
+	transformer: superjson,
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			data: {
+				...shape.data,
+				zodError:
+					error.cause instanceof ZodError ? error.cause.flatten() : null,
+			},
+		};
+	},
 });
 
 /**
@@ -62,7 +81,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
  *
  * @see https://trpc.io/docs/server/server-side-calls
  */
-export const createCallerFactory = t.createCallerFactory;
+export const createCallerFactory = trpc.createCallerFactory;
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -76,7 +95,7 @@ export const createCallerFactory = t.createCallerFactory;
  *
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const createTRPCRouter = trpc.router;
 
 /**
  * Public (unauthenticated) procedure
@@ -85,7 +104,7 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = trpc.procedure;
 
 /**
  * Protected (authenticated) procedure
@@ -95,16 +114,15 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
+	if (!ctx.session ?? !ctx.session?.user.data?.verified) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
 
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: ctx.session,
-      user: ctx.session.user,
-    },
-  });
+	return next({
+		ctx: {
+			session: ctx.session,
+			user: ctx.session.user.data,
+		},
+	});
 });

@@ -1,4 +1,6 @@
+import { createClient } from "@/lib/supabase/server";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { Prisma, type Product } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -37,7 +39,7 @@ export const customerRouter = createTRPCRouter({
 			});
 
 			if (!product) {
-				throw new TRPCError({ code: "NOT_FOUND" });
+				return null;
 			}
 
 			const sellerData = await ctx.db.user.findFirst({
@@ -48,4 +50,28 @@ export const customerRouter = createTRPCRouter({
 
 			return { ...product, seller: sellerData?.name };
 		}),
+
+	searchProduct: publicProcedure.input(z.string()).query(async ({ input }) => {
+		const query = `${input
+			.split(" ")
+			.map((word) => `'${word}'`)
+			.join(" | ")}`;
+
+		const supabase = createClient();
+
+		const { data, error } = await supabase
+			.from(Prisma.ModelName.Product)
+			.select()
+			.textSearch("fts", query);
+
+		if (error) {
+			throw new TRPCError({ code: "NOT_FOUND" });
+		}
+
+		if (!data || data.length === 0) {
+			return null;
+		}
+
+		return data as Product[];
+	}),
 });

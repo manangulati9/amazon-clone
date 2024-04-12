@@ -35,10 +35,7 @@
         "./src/*"
       ],
       "@ui/*": [
-        "./src/app/_components/ui/*"
-      ],
-      "@comp": [
-        "./src/app/_components/*"
+        "./src/ui/*"
       ]
     }
   },

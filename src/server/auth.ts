@@ -8,6 +8,7 @@ import { db } from "@/server/db";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { type User } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -19,13 +20,14 @@ declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: {
 			id: string;
+			data?: User;
 		} & DefaultSession["user"];
 	}
 }
 
 declare module "next-auth/jwt" {
 	interface JWT {
-		userId: string;
+		uid: string;
 	}
 }
 
@@ -37,11 +39,11 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
 	callbacks: {
 		session: ({ session, token }) => {
-			session.user.id = token.userId;
+			session.user.id = token.uid;
 			return session;
 		},
 		jwt: ({ token }) => {
-			token.userId = token.sub!;
+			token.uid = token.sub!;
 			return token;
 		},
 		signIn: async ({ user, account }) => {
@@ -58,6 +60,7 @@ export const authOptions: NextAuthOptions = {
 
 				await db.user.create({
 					data: {
+						id: user.id,
 						name: user.name ?? "",
 						email: user.email ?? "",
 						image: user.image ?? "",
@@ -69,9 +72,12 @@ export const authOptions: NextAuthOptions = {
 			return !!user.email;
 		},
 	},
+	pages: {
+		signIn: "/auth/login",
+	},
 	session: {
 		strategy: "jwt",
-		maxAge: 30 * 24 * 60 * 60,
+		maxAge: 7 * 24 * 60 * 60,
 		updateAge: 24 * 60 * 60,
 	},
 	secret: env.NEXTAUTH_SECRET,

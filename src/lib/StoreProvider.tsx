@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@prisma/client";
+import { type Product } from "@prisma/client";
 import {
 	type Dispatch,
 	type ReactNode,
@@ -8,9 +8,13 @@ import {
 	createContext,
 	useState,
 	useContext,
+	useEffect,
 } from "react";
 
-type ProductData = Product & { seller: string | undefined };
+export type ProductData = Product & {
+	seller: string | undefined;
+	quantity?: string;
+};
 
 type StoreFields = {
 	cartItems: ProductData[];
@@ -21,6 +25,17 @@ const StoreContext = createContext<StoreFields | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
 	const [cartItems, setCartItems] = useState<ProductData[]>([]);
+
+	useEffect(() => {
+		const cartItemsString = localStorage.getItem("cartItems");
+
+		if (!cartItemsString) {
+			return;
+		}
+
+		const storedCartItems = JSON.parse(cartItemsString) as ProductData[];
+		setCartItems(storedCartItems);
+	}, []);
 
 	return (
 		<StoreContext.Provider value={{ cartItems, setCartItems }}>

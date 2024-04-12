@@ -17,9 +17,9 @@ import { ChevronDown, MapPin, Menu, Search } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import { Button, buttonVariants } from "./ui/button";
-import { Separator } from "./ui/separator";
+import React, { type FormEvent, useState } from "react";
+import { Button, buttonVariants } from "@ui/button";
+import { Separator } from "@ui/separator";
 import {
 	LANGUAGE_OPTIONS,
 	NAVBAR_ITEMS,
@@ -27,6 +27,8 @@ import {
 	PRODUCT_CATEGORIES,
 } from "@/lib/data/navbar";
 import { useStore } from "@/lib/StoreProvider";
+import { getBaseUrl } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
 	const [language, setLanguage] = useState("english");
@@ -34,6 +36,25 @@ export function Navbar() {
 	const isSignedIn = status === "authenticated";
 	const user = session?.user;
 	const { cartItems } = useStore();
+	const router = useRouter();
+	const [query, setQuery] = useState("");
+
+	const handleSearch = (e: FormEvent) => {
+		e.preventDefault();
+		const baseURL = getBaseUrl();
+
+		const searchParams = new URLSearchParams();
+		searchParams.append("query", query);
+
+		const redirectURL = `${baseURL}/search?` + searchParams.toString();
+
+		router.push(redirectURL);
+	};
+
+	const handleSignOut = async () => {
+		await signOut();
+		localStorage.removeItem("cartItems");
+	};
 
 	return (
 		<div className="fixed z-50 w-full h-48 lg:h-28 xs:h-44">
@@ -79,10 +100,7 @@ export function Navbar() {
 									</div>
 								</div>
 								{isSignedIn ? (
-									<Button
-										onClick={async () => await signOut()}
-										className="w-full"
-									>
+									<Button onClick={handleSignOut} className="w-full">
 										Sign out
 									</Button>
 								) : (
@@ -102,7 +120,10 @@ export function Navbar() {
 				</div>
 
 				{/* Searchbar */}
-				<div className="flex flex-grow w-full h-10 rounded text-foreground lg:w-fit">
+				<form
+					onSubmit={handleSearch}
+					className="flex flex-grow w-full h-10 rounded text-foreground lg:w-fit"
+				>
 					<Select>
 						<SelectTrigger className="bg-background/80 text-xs text-nowrap focus-visible:ring-offset-0 w-fit border-r border-muted/10 rounded-r-none [&>span]:line-clamp-none">
 							<SelectValue placeholder="All" />
@@ -115,14 +136,18 @@ export function Navbar() {
 							))}
 						</SelectContent>
 					</Select>
-					<Input className="rounded-none focus-visible:ring-offset-0" />
+					<Input
+						onChange={(e) => setQuery(e.target.value)}
+						className="rounded-none focus-visible:ring-offset-0"
+						placeholder="Search products..."
+					/>
 					<button
 						className="px-3 rounded-r bg-primary_light hover:bg-primary_light/90"
 						type="submit"
 					>
 						<Search className="w-6 h-6" />
 					</button>
-				</div>
+				</form>
 
 				<div className="flex gap-2 justify-between w-full h-full lg:w-fit">
 					{/* Language select */}
@@ -194,10 +219,7 @@ export function Navbar() {
 											</p>
 										</div>
 									) : (
-										<Button
-											onClick={async () => await signOut()}
-											className="w-full"
-										>
+										<Button onClick={handleSignOut} className="w-full">
 											Sign out
 										</Button>
 									)}
@@ -246,7 +268,7 @@ export function Navbar() {
 
 					{/* Cart button */}
 					<Link
-						href="/cart"
+						href="/checkout"
 						className="flex relative gap-2 justify-between items-end py-1 px-2 outline-1 rounded-[2px] hover:outline"
 					>
 						{cartItems.length > 0 && (
