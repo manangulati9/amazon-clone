@@ -1,9 +1,9 @@
-import { ActionBox } from "@/app/_components/product/ActionBox";
-import { ImageCarousel } from "@/app/_components/product/ProdImgCarousel";
-import StarRating from "@/app/_components/product/StarRating";
-import { AspectRatio } from "@/app/_components/ui/aspect-ratio";
+import { ActionBox } from "@/app/(main)/product/_components/ActionBox";
+import { ImageCarousel } from "@/app/(main)/product/_components/ProdImgCarousel";
+import StarRating from "@/app/(main)/product/_components/StarRating";
+import { getCachedData } from "@/lib/utils";
 import { api } from "@/trpc/server";
-import Image from "next/image";
+import { notFound } from "next/navigation";
 
 export default async function Page({
 	searchParams,
@@ -11,24 +11,20 @@ export default async function Page({
 	params: { slug: string };
 	searchParams: Record<string, string | undefined>;
 }) {
-	const productID = searchParams["id"];
+	const productID = searchParams.id;
 
 	if (!productID) {
-		return (
-			<main className="container flex flex-col justify-center items-center h-full">
-				<div className="w-full max-w-[350px]">
-					<AspectRatio>
-						<Image src="/assets/404.svg" alt="" fill />
-					</AspectRatio>
-				</div>
-				<div className="text-3xl font-bold">
-					Sorry, the page you&apos;re looking for doesn't exist.
-				</div>
-			</main>
-		);
+		notFound();
 	}
 
-	const productData = await api.customer.getProductById(productID);
+	const productData = await getCachedData(
+		async () => api.customer.getProductById(productID),
+		[productID],
+	);
+
+	if (!productData) {
+		notFound();
+	}
 
 	return (
 		<main className="container flex flex-col gap-4 justify-between p-8 md:flex-row">
@@ -44,17 +40,16 @@ export default async function Page({
 					<hr className="my-2.5 border bg-slate-500" />
 					<div>
 						<p className="my-2 text-lg sm:text-xl md:text-2xl">
-							₹{productData.price.toLocaleString()}
+							₹{productData.price.toFixed(2)}
 						</p>
 						<div className="flex space-x-2 text-sm sm:text-base md:text-lg text-slate-600">
 							<span>M.R.P -</span>
 							<p className="line-through">
-								₹{(productData.price + 1000).toLocaleString()}
-							</p>{" "}
+								₹{(productData.price + 1000).toFixed(2)}
+							</p>
 						</div>
 						<p className="text-xs sm:text-sm">Inclusive of all taxes</p>
 						<p className="text-xs sm:text-sm">
-							{" "}
 							EMI starts at ₹{(productData.price / 6).toFixed(2)}. No Cost EMI
 							available
 						</p>

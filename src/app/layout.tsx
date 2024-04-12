@@ -5,6 +5,8 @@ import localFont from "next/font/local";
 import { AuthProvider } from "@/lib/AuthProvider";
 import { getServerAuthSession } from "@/server/auth";
 import { StoreProvider } from "@/lib/StoreProvider";
+import { Toaster } from "sonner";
+import NextTopLoader from "nextjs-toploader";
 
 const ember = localFont({
 	src: [
@@ -49,7 +51,15 @@ export default async function RootLayout({
 			>
 				<AuthProvider session={session}>
 					<TRPCReactProvider>
-						<StoreProvider>{children}</StoreProvider>
+						<StoreProvider>
+							<NextTopLoader
+								color="hsl(50 100% 54%)"
+								showSpinner={false}
+								height={2}
+							/>
+							{children}
+							<Toaster position="top-center" richColors />
+						</StoreProvider>
 					</TRPCReactProvider>
 				</AuthProvider>
 			</body>

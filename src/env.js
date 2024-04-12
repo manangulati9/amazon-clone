@@ -17,10 +17,7 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),
-		NEXTAUTH_SECRET:
-			process.env.NODE_ENV === "production"
-				? z.string()
-				: z.string().optional(),
+		NEXTAUTH_SECRET: z.string(),
 		NEXTAUTH_URL: z.preprocess(
 			// This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
 			// Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -30,8 +27,9 @@ export const env = createEnv({
 		),
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
-		MAIL_ID: z.string(),
-		MAIL_PASSWORD: z.string(),
+		MAIL_ID: z.string().email(),
+		PERSONAL_MAIL_ID: z.string().email(),
+		RESEND_API_KEY: z.string(),
 	},
 
 	/**
@@ -57,10 +55,11 @@ export const env = createEnv({
 		GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 		GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 		MAIL_ID: process.env.MAIL_ID,
-		MAIL_PASSWORD: process.env.MAIL_PASSWORD,
 		NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 		NEXT_PUBLIC_SUPABASE_PROJECT_URL:
 			process.env.NEXT_PUBLIC_SUPABASE_PROJECT_URL,
+		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		PERSONAL_MAIL_ID: process.env.PERSONAL_MAIL_ID,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

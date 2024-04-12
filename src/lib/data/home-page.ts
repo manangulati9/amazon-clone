@@ -4,6 +4,8 @@ export type TItemDetails = {
 	name?: string;
 	category: ProductCategory[];
 	image: string;
+	href: string;
+	object_fit?: string;
 };
 
 export type TCardItem = {
@@ -17,7 +19,8 @@ export const CARD_GROUP: TCardItem[] = [
 		items: [
 			{
 				category: [ProductCategory.Computer],
-				image: "/assets/home/gaming_pc.jpg",
+				image: "/assets/home/gaming_pc.webp",
+				href: "/search?query=gaming+pc",
 			},
 		],
 	},
@@ -28,21 +31,25 @@ export const CARD_GROUP: TCardItem[] = [
 				name: "Dining",
 				category: [ProductCategory.Kitchen],
 				image: "/assets/home/dining.jpg",
+				href: "/search?query=dining",
 			},
 			{
 				name: "Home",
 				category: [ProductCategory.Home],
 				image: "/assets/home/home.jpg",
+				href: "/search?query=home",
 			},
 			{
 				name: "Kitchen",
 				category: [ProductCategory.Kitchen],
-				image: "/assets/home/kitchen.jpg",
+				image: "/assets/home/kitchen.webp",
+				href: "/search?query=kitchen",
 			},
 			{
 				name: "Health & Beauty",
 				category: [ProductCategory.Health, ProductCategory.Beauty],
 				image: "/assets/home/health&beauty.jpg",
+				href: "/search?query=health+beauty",
 			},
 		],
 	},
@@ -50,8 +57,11 @@ export const CARD_GROUP: TCardItem[] = [
 		title: "Explore the Latest iPhone",
 		items: [
 			{
+				name: "iPhone 12",
 				category: [ProductCategory.Mobile],
-				image: "/assets/home/iphone_13.png",
+				image: "/assets/home/iphone-12.webp",
+				href: `/search?query=iphone+12+${ProductCategory.Mobile}`,
+				object_fit: "object-contain",
 			},
 		],
 	},
@@ -62,21 +72,26 @@ export const CARD_GROUP: TCardItem[] = [
 				name: "Gaming Consoles",
 				category: [ProductCategory.Video_Game],
 				image: "/assets/home/consoles.jpg",
+				href: "/search?query=consoles",
 			},
 			{
 				name: "Smart TVs",
 				category: [ProductCategory.TV],
 				image: "/assets/home/tv.jpg",
+				href: "/search?query=tv",
 			},
 			{
-				name: "Wireless Headphones",
+				name: "Headphones",
 				category: [ProductCategory.Electronic],
-				image: "/assets/home/headphones.jpg",
+				image: "/assets/home/headphones.avif",
+				href: "/search?query=headphones",
 			},
 			{
-				name: "Headsets",
+				name: "TWS",
 				category: [ProductCategory.Music],
-				image: "/assets/home/headsets.jpeg",
+				image: "/assets/home/headsets.png",
+				href: "/search?query=headsets",
+				object_fit: "object-contain",
 			},
 		],
 	},
@@ -87,21 +102,25 @@ export const CARD_GROUP: TCardItem[] = [
 				name: "Bestseller Novel",
 				category: [ProductCategory.Book],
 				image: "/assets/home/bestseller.webp",
+				href: `/search?query=bestseller+${ProductCategory.Book}`,
 			},
 			{
 				name: "Mystery Thriller",
 				category: [ProductCategory.Book],
 				image: "/assets/home/mystery_thriller.jpg",
+				href: `/search?query=mystery+thriller+${ProductCategory.Book}`,
 			},
 			{
 				name: "Romantic Comedy",
 				category: [ProductCategory.Book],
 				image: "/assets/home/romantic_comedy.jpg",
+				href: `/search?query=romantic+comedy+${ProductCategory.Book}`,
 			},
 			{
 				name: "Sci-Fi Fantasy",
 				category: [ProductCategory.Book],
 				image: "/assets/home/sci_fi.png",
+				href: `/search?query=sci+fi+${ProductCategory.Book}`,
 			},
 		],
 	},

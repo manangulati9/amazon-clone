@@ -7,7 +7,7 @@ export const signUpFormSchema = z
 		email: z.string().email("Invalid email"),
 		password: z.string().min(8, "Min. length is 8 character(s)"),
 		confirmPassword: z.string().min(8, "Min. length is 8 character(s)"),
-		accountType: z.enum(["SELLER", "CUSTOMER"]),
+		type: z.enum(["SELLER", "CUSTOMER"]),
 	})
 	.refine((val) => val.password === val.confirmPassword, {
 		message: "Passwords don't match",
