@@ -1,7 +1,7 @@
 import { ActionBox } from "@/app/(main)/product/_components/ActionBox";
 import { ImageCarousel } from "@/app/(main)/product/_components/ProdImgCarousel";
 import StarRating from "@/app/(main)/product/_components/StarRating";
-import { getCachedData } from "@/lib/utils";
+import { getData } from "@/lib/get-item";
 import { api } from "@/trpc/server";
 import { notFound } from "next/navigation";
 
@@ -17,9 +17,8 @@ export default async function Page({
 		notFound();
 	}
 
-	const productData = await getCachedData(
-		async () => api.customer.getProductById(productID),
-		[productID],
+	const productData = await getData(() =>
+		api.customer.getProductById(productID),
 	);
 
 	if (!productData) {

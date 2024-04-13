@@ -1,4 +1,6 @@
 import "@/styles/globals.css";
+import "@uppy/core/dist/style.min.css";
+import "@uppy/dashboard/dist/style.min.css";
 import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import localFont from "next/font/local";

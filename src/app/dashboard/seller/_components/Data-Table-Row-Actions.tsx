@@ -1,6 +1,5 @@
 "use client";
 
-import { revalidate } from "@/lib/actions";
 import { api } from "@/trpc/react";
 import { ProductModel } from "@/zod";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -18,6 +17,8 @@ import { EditProduct } from "./Edit-Product";
 import { Drawer, DrawerTrigger } from "@ui/drawer";
 import { toast } from "sonner";
 import { useState } from "react";
+import { notFound } from "next/navigation";
+import { revalidate } from "@/lib/actions";
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>;
@@ -26,19 +27,25 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
 	row,
 }: DataTableRowActionsProps<TData>) {
-	const product = ProductModel.parse(row.original);
+	const parseResult = ProductModel.safeParse(row.original);
 	const [isOpen, setIsOpen] = useState(false);
+
+	if (!parseResult.success) {
+		notFound();
+	}
+
+	const parsedProd = parseResult.data;
 
 	const { mutate: copyRow } = api.seller.addProduct.useMutation({
 		onSuccess: () => {
-			void revalidate("/dashboard");
+			void revalidate("/dashboard/seller");
 			toast.success("Copy created successfully");
 		},
 	});
 
 	const { mutate: deleteRow } = api.seller.deleteProduct.useMutation({
 		onSuccess: () => {
-			void revalidate("/dashboard");
+			void revalidate("/dashboard/seller");
 			toast.success("Product deleted!");
 		},
 	});
@@ -59,20 +66,20 @@ export function DataTableRowActions<TData>({
 					<DrawerTrigger className="w-full">
 						<DropdownMenuItem>Edit</DropdownMenuItem>
 					</DrawerTrigger>
-					<DropdownMenuItem onClick={() => copyRow(product)}>
+					<DropdownMenuItem onClick={() => copyRow(parsedProd)}>
 						Make a copy
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
 						onClick={() =>
-							deleteRow([{ id: product.id, images: product.images }])
+							deleteRow([{ id: parsedProd.id, images: parsedProd.images }])
 						}
 					>
 						Delete
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			<EditProduct setIsOpen={setIsOpen} product={product} />
+			<EditProduct setIsOpen={setIsOpen} product={parsedProd} />
 		</Drawer>
 	);
 }

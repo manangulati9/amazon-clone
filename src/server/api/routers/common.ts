@@ -17,8 +17,22 @@ import Notification from "@/app/_components/emails/notification";
 import AuthorizeSeller from "@/app/_components/emails/authorize-seller";
 
 export const commonRouter = createTRPCRouter({
-	getData: protectedProcedure.query(({ ctx }) => {
-		return ctx.user;
+	getData: protectedProcedure.query(async ({ ctx }) => {
+		const userData = await ctx.db.user.findUnique({
+			where: {
+				email: ctx.user.email!,
+				id: ctx.user.id,
+			},
+		});
+
+		if (!userData) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: "Couldn't fetch user data",
+			});
+		}
+
+		return userData;
 	}),
 
 	createAccount: publicProcedure

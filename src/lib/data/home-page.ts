@@ -127,21 +127,21 @@ export const CARD_GROUP: TCardItem[] = [
 ];
 
 export const DESKTOP_CAROUSEL_IMAGES = [
-	"/assets/homeCarousel/hp1.jpg",
-	"/assets/homeCarousel/hp2.jpg",
-	"/assets/homeCarousel/hp3.jpg",
-	"/assets/homeCarousel/hp4.jpg",
-	"/assets/homeCarousel/hp5.jpg",
-	"/assets/homeCarousel/hp6.jpg",
-	"/assets/homeCarousel/hp7.jpg",
+	"/homeCarousel/hp1.jpg",
+	"/homeCarousel/hp2.jpg",
+	"/homeCarousel/hp3.jpg",
+	"/homeCarousel/hp4.jpg",
+	"/homeCarousel/hp5.jpg",
+	"/homeCarousel/hp6.jpg",
+	"/homeCarousel/hp7.jpg",
 ];
 
 export const MOBILE_CAROUSEL_IMAGES = [
-	"/assets/homeCarousel/mobile/hp1.jpg",
-	"/assets/homeCarousel/mobile/hp2.jpg",
-	"/assets/homeCarousel/mobile/hp3.jpg",
-	"/assets/homeCarousel/mobile/hp4.jpg",
-	"/assets/homeCarousel/mobile/hp5.jpg",
-	"/assets/homeCarousel/mobile/hp6.jpg",
-	"/assets/homeCarousel/mobile/hp7.jpg",
+	"/homeCarousel/mobile/hp1.jpg",
+	"/homeCarousel/mobile/hp2.jpg",
+	"/homeCarousel/mobile/hp3.jpg",
+	"/homeCarousel/mobile/hp4.jpg",
+	"/homeCarousel/mobile/hp5.jpg",
+	"/homeCarousel/mobile/hp6.jpg",
+	"/homeCarousel/mobile/hp7.jpg",
 ];

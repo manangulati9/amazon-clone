@@ -56,22 +56,48 @@ export const LANGUAGE_OPTIONS = [
 	{ value: "telugu", label: "Telugu" },
 ];
 
-export const POPOVER_LINK_ITEMS = [
-	{
-		title: "Your lists",
-		items: [
-			{ label: "Create a List", href: "/dashboard/wishlist?create-list=true" },
-			{ label: "Find a list or registry", href: "#" },
-		],
-	},
-	{
-		title: "Your account",
-		items: [
-			{ label: "Account", href: "/dashboard" },
-			{ label: "Orders", href: "/dashboard/orders" },
-			{ label: "Wishlist", href: "/dashboard/wishlist" },
-			{ label: "Recommendations", href: "#" },
-			{ label: "Prime Membership", href: "#" },
-		],
-	},
-];
+export const POPOVER_LINK_ITEMS = {
+	SELLER: [
+		{
+			title: "Your lists",
+			items: [
+				{ label: "Create a List", href: "#" },
+				{
+					label: "Your Wishlist",
+					href: "#",
+				},
+				{ label: "Find a list", href: "#" },
+			],
+		},
+		{
+			title: "Your account",
+			items: [
+				{ label: "Your Products", href: "/dashboard/seller" },
+				{ label: "Your Products", href: "/dashboard/seller" },
+				{ label: "Your Products", href: "/dashboard/seller" },
+			],
+		},
+	],
+
+	CUSTOMER: [
+		{
+			title: "Your lists",
+			items: [
+				{ label: "Create a List", href: "#" },
+				{
+					label: "Your Wishlist",
+					href: "#",
+				},
+				{ label: "Find a list", href: "#" },
+			],
+		},
+		{
+			title: "Your account",
+			items: [
+				{ label: "Your Orders", href: "/dashboard/customer/orders" },
+				{ label: "Your Profile", href: "/dashboard/customer/profile" },
+				{ label: "Your Orders", href: "/dashboard/customer/orders" },
+			],
+		},
+	],
+};

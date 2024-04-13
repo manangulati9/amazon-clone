@@ -50,11 +50,12 @@ export function EditProduct({
 			price: product.price,
 			description: product.description,
 			images: product.images,
+			category: product.category,
 		},
 	});
 
 	const onSuccess = () => {
-		void revalidate("/dashboard");
+		void revalidate("/dashboard/seller");
 		toast.success("Details updated successfully!");
 		setIsOpen(false);
 		form.reset();
@@ -142,7 +143,7 @@ export function EditProduct({
 						render={({ field }) => (
 							<FormItem className="row-span-2">
 								<FormLabel>Upload images (max 5)</FormLabel>
-								<div className="flex flex-wrap gap-4 justify-evenly mb-2">
+								<div className="flex flex-wrap gap-4 mb-2">
 									{field.value.map((url, i) => (
 										<div
 											className={cn("relative", {

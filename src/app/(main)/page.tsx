@@ -1,24 +1,17 @@
 import { CARD_GROUP } from "@/lib/data/home-page";
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/card";
 import { AspectRatio } from "@ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonVariants } from "@ui/button";
 import { ImageCarousel } from "../_components/ImageCarousel";
 import { api } from "@/trpc/server";
-import { cn, getCachedData } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { getData } from "@/lib/get-item";
 
 export default async function Page() {
-	const [todays_deals, top_smartphones] = await getCachedData(
-		async () =>
-			Promise.all([api.customer.todaysDeals(), api.customer.topSmartphones()]),
-		["home-data"],
+	const [todays_deals, top_smartphones] = await getData(() =>
+		Promise.all([api.customer.todaysDeals(), api.customer.topSmartphones()]),
 	);
 
 	return (

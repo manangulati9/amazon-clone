@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@ui/card";
-import { getCachedData, getDay, getMonth } from "@/lib/utils";
+import { getDay, getMonth } from "@/lib/utils";
+import { getData } from "@/lib/get-item";
 
 export default async function Page({
 	searchParams,
@@ -19,10 +20,7 @@ export default async function Page({
 		notFound();
 	}
 
-	const products = await getCachedData(
-		async () => api.customer.searchProduct(query),
-		[query],
-	);
+	const products = await getData(() => api.customer.searchProduct(query));
 
 	if (!products) {
 		notFound();

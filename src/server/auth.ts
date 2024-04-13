@@ -8,7 +8,6 @@ import { db } from "@/server/db";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { type User } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,7 +19,6 @@ declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: {
 			id: string;
-			data?: User;
 		} & DefaultSession["user"];
 	}
 }
@@ -58,22 +56,29 @@ export const authOptions: NextAuthOptions = {
 					return !!user.email;
 				}
 
-				await db.user.create({
-					data: {
-						id: user.id,
-						name: user.name ?? "",
-						email: user.email ?? "",
-						image: user.image ?? "",
-						verified: true,
-						type: "CUSTOMER",
-					},
-				});
+				try {
+					await db.user.create({
+						data: {
+							id: user.id,
+							name: user.name ?? "",
+							email: user.email ?? "",
+							image: user.image ?? "",
+							verified: true,
+							type: "CUSTOMER",
+						},
+					});
+				} catch (error) {
+					console.error(error);
+					return false;
+				}
 			}
+
 			return !!user.email;
 		},
 	},
 	pages: {
 		signIn: "/auth/login",
+		error: "/auth/error",
 	},
 	session: {
 		strategy: "jwt",
