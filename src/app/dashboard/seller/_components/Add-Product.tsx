@@ -50,7 +50,7 @@ export function AddProduct() {
 	});
 
 	const onSuccess = () => {
-		void revalidate("/dashboard");
+		void revalidate("/dashboard/seller");
 		toast.success("Product added!");
 		setIsOpen(false);
 		form.reset();

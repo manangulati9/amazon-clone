@@ -33,7 +33,13 @@ export function ImageCarousel() {
 						<CarouselItem key={index}>
 							<div className="">
 								<AspectRatio ratio={16 / 7}>
-									<Image src={img} alt="" fill className="object-cover" />
+									<Image
+										src={img}
+										priority
+										alt=""
+										fill
+										className="object-cover"
+									/>
 								</AspectRatio>
 							</div>
 						</CarouselItem>

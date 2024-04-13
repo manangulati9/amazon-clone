@@ -14,7 +14,7 @@ import {
 } from "@ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@ui/sheet";
 import { ChevronDown, MapPin, Menu, Search } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { type FormEvent, useState } from "react";
@@ -29,15 +29,15 @@ import {
 import { useStore } from "@/lib/StoreProvider";
 import { getBaseUrl } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { type User } from "@prisma/client";
 
-export function Navbar() {
+export function Navbar({ user }: { user: User | null }) {
 	const [language, setLanguage] = useState("english");
-	const { data: session, status } = useSession();
-	const isSignedIn = status === "authenticated";
-	const user = session?.user;
 	const { cartItems } = useStore();
 	const router = useRouter();
 	const [query, setQuery] = useState("");
+	const isSignedIn = !!user;
+	const popover_index = user ? user.type : "CUSTOMER";
 
 	const handleSearch = (e: FormEvent) => {
 		e.preventDefault();
@@ -52,7 +52,7 @@ export function Navbar() {
 	};
 
 	const handleSignOut = async () => {
-		await signOut();
+		await signOut({ callbackUrl: "/auth/login" });
 		localStorage.removeItem("cartItems");
 	};
 
@@ -228,9 +228,9 @@ export function Navbar() {
 								<div className="flex justify-between">
 									<div className="space-y-2">
 										<h3 className="text-base">
-											{POPOVER_LINK_ITEMS[0]?.title}
+											{POPOVER_LINK_ITEMS[popover_index][0]?.title}
 										</h3>
-										{POPOVER_LINK_ITEMS[0]?.items.map((item) => (
+										{POPOVER_LINK_ITEMS[popover_index][0]?.items.map((item) => (
 											<Link
 												href={item.href}
 												key={item.href}
@@ -243,9 +243,9 @@ export function Navbar() {
 									<div className="mx-4 border border-muted/10" />
 									<div className="flex flex-col gap-2">
 										<h3 className="text-base">
-											{POPOVER_LINK_ITEMS[1]?.title}
+											{POPOVER_LINK_ITEMS[popover_index][1]?.title}
 										</h3>
-										{POPOVER_LINK_ITEMS[1]?.items.map((item) => (
+										{POPOVER_LINK_ITEMS[popover_index][1]?.items.map((item) => (
 											<Link
 												href={item.href}
 												key={item.href}

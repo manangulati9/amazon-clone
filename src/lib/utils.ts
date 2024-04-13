@@ -9,8 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 export const getCachedData = async <T>(
 	callback: () => Promise<T>,
 	keyParts: string[],
+	tags?: string[],
 ) => {
-	const cachedCallback = cache(callback, keyParts, { revalidate: 3600 });
+	const cachedCallback = cache(callback, keyParts, { revalidate: 3600, tags });
 	const data = await cachedCallback();
 	return data;
 };

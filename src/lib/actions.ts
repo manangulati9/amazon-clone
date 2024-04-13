@@ -2,11 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function revalidate(path: string | string[]) {
+export async function revalidate(
+	path: string | string[],
+	type?: "page" | "layout" | undefined,
+) {
 	if (typeof path === "string") {
-		revalidatePath(path);
+		revalidatePath(path, type);
 		return;
 	}
 
-	path.forEach((p) => revalidatePath(p));
+	path.forEach((p) => revalidatePath(p, type));
 }

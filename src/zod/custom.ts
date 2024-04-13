@@ -38,3 +38,11 @@ export const addProductFormSchema = z.object({
 });
 
 export type TAddProductForm = z.infer<typeof addProductFormSchema>;
+
+export const profileFormSchema = z.object({
+	email: z.string().email(),
+	name: z.string().min(1, "Min. 1 character is required"),
+	image: z.string(),
+});
+
+export type TProfileForm = z.infer<typeof profileFormSchema>;

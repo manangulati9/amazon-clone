@@ -29,24 +29,6 @@ import { db } from "@/server/db";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
 	const session = await getServerAuthSession();
 
-	if (session?.user.email) {
-		const userData = await db.user.findUnique({
-			where: {
-				email: session.user.email,
-				id: session.user.id,
-			},
-		});
-
-		if (!userData) {
-			throw new TRPCError({
-				code: "NOT_FOUND",
-				message: "Couldn't fetch user data",
-			});
-		}
-
-		session.user.data = userData;
-	}
-
 	return {
 		db,
 		session,
@@ -115,14 +97,14 @@ export const publicProcedure = trpc.procedure;
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
-	if (!ctx.session ?? !ctx.session?.user.data?.verified) {
+	if (!ctx.session ?? !ctx.session?.user.email) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
 	return next({
 		ctx: {
 			session: ctx.session,
-			user: ctx.session.user.data,
+			user: ctx.session.user,
 		},
 	});
 });

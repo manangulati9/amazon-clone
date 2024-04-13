@@ -5,7 +5,7 @@ import { buttonVariants } from "@ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { api } from "@/trpc/server";
-import { getCachedData } from "@/lib/utils";
+import { getData } from "@/lib/get-item";
 
 export default async function Page({
 	searchParams,
@@ -20,10 +20,7 @@ export default async function Page({
 	}
 
 	const token = parseResult.data;
-	const result = await getCachedData(
-		async () => await api.common.authorizeSeller(token),
-		["authorize-seller"],
-	);
+	const result = await getData(() => api.common.authorizeSeller(token));
 
 	if (result.status === "failed") {
 		console.error(result.error);

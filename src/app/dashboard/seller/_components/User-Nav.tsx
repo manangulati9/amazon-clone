@@ -15,8 +15,8 @@ import {
 
 export async function UserNav() {
 	const userData = await getCachedData(
-		async () => api.common.getData(),
-		["user-data"],
+		async () => await api.common.getData(),
+		["user-nav-data-fetch"],
 	);
 
 	return (

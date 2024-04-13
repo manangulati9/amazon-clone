@@ -11,6 +11,8 @@ import { getDay, getMonth } from "@/lib/utils";
 import { Button } from "@ui/button";
 import { type ProductData, useStore } from "@/lib/StoreProvider";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function ActionBox({
 	productData,
@@ -22,8 +24,16 @@ export function ActionBox({
 	const { cartItems, setCartItems } = useStore();
 	const [quantity, setQuantity] = useState("");
 	const [isProdInCart, setIsProdInCart] = useState(false);
+	const { status } = useSession();
+	const isSignedIn = status === "authenticated";
+	const router = useRouter();
 
 	const handleCartAdd = () => {
+		if (!isSignedIn) {
+			router.push("/auth/login");
+			return;
+		}
+
 		const data = { ...productData, quantity };
 		const updatedCartItems = [...cartItems, data];
 
@@ -37,6 +47,15 @@ export function ActionBox({
 
 		localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
 		setIsProdInCart(true);
+	};
+
+	const handleBuyNow = () => {
+		if (!isSignedIn) {
+			router.push("/auth/login");
+			return;
+		}
+
+		alert("Thank you for your purchase!");
 	};
 
 	useEffect(() => {
@@ -99,7 +118,7 @@ export function ActionBox({
 				</Button>
 				<Button
 					className="w-full bg-orange-400 rounded-full hover:bg-orange-500"
-					onClick={() => alert("Thank you for your purchase!")}
+					onClick={handleBuyNow}
 				>
 					Buy now
 				</Button>

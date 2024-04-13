@@ -1,21 +1,27 @@
 import * as z from "zod";
 import { UserType } from "@prisma/client";
-import { type CompleteProduct, RelatedProductModel } from "./index";
+import {
+	type CompleteProduct,
+	RelatedProductModel,
+	type CompleteOrder,
+	RelatedOrderModel,
+} from "./index";
 
 export const UserModel = z.object({
 	id: z.string(),
 	name: z.string(),
-	email: z.string(),
+	email: z.string().email(),
 	verified: z.boolean(),
 	pw_hash: z.string().nullish(),
-	image: z.string().nullish(),
+	image: z.string().url().nullish(),
 	type: z.nativeEnum(UserType),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
 });
 
 export interface CompleteUser extends z.infer<typeof UserModel> {
-	products: CompleteProduct[];
+	Product: CompleteProduct[];
+	Order: CompleteOrder[];
 }
 
 /**
@@ -25,6 +31,7 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
  */
 export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() =>
 	UserModel.extend({
-		products: RelatedProductModel.array(),
+		Product: RelatedProductModel.array(),
+		Order: RelatedOrderModel.array(),
 	}),
 );

@@ -23,17 +23,30 @@ model Product {
   createdById String
 }
 
+model Order {
+  id          String          @id @default(cuid())
+  name        String
+  category    ProductCategory
+  price       Float
+  quantity    Int
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  createdBy   User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+}
+
 model User {
   id        String    @id @default(cuid())
   name      String
-  email     String    @unique
+  email     String    @unique ///@zod.email()
   verified  Boolean
   pw_hash   String?
-  image     String?
+  image     String? ///@zod.url()
   type      UserType
-  products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  Product   Product[]
+  Order     Order[]
 }
 
 enum UserType {
