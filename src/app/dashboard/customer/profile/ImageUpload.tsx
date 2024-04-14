@@ -32,7 +32,7 @@ export default function ImageUpload({
 	refetch,
 }: {
 	dimensions: { mobile: number; tablet: number; desktop: number };
-	refetch: ReturnType<typeof api.common.getData.useQuery>["refetch"];
+	refetch: ReturnType<typeof api.common.getUserData.useQuery>["refetch"];
 }) {
 	const { mobile, tablet, desktop } = dimensions;
 	const { data: session } = useSession();

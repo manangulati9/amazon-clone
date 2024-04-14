@@ -1,8 +1,4 @@
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { Resend } from "resend";
 import { signUpFormSchema } from "@/zod/custom";
 import bcrypt from "bcrypt";
@@ -17,11 +13,15 @@ import Notification from "@/app/_components/emails/notification";
 import AuthorizeSeller from "@/app/_components/emails/authorize-seller";
 
 export const commonRouter = createTRPCRouter({
-	getData: protectedProcedure.query(async ({ ctx }) => {
+	getUserData: publicProcedure.query(async ({ ctx }) => {
+		if (!ctx.session?.user) {
+			return null;
+		}
+
 		const userData = await ctx.db.user.findUnique({
 			where: {
-				email: ctx.user.email!,
-				id: ctx.user.id,
+				email: ctx.session.user.email!,
+				id: ctx.session.user.id,
 			},
 		});
 

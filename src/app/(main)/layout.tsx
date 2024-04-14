@@ -9,7 +9,7 @@ export default async function Layout({
 }: {
 	children: React.ReactNode;
 }) {
-	const userData = await getData(api.common.getData);
+	const userData = await getData(api.common.getUserData);
 
 	return (
 		<main className="flex flex-col h-full">

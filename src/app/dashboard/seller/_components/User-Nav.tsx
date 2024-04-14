@@ -1,4 +1,4 @@
-import { getCachedData } from "@/lib/utils";
+import { getData } from "@/lib/get-item";
 import { api } from "@/trpc/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/avatar";
 import { Button } from "@ui/button";
@@ -14,10 +14,7 @@ import {
 } from "@ui/dropdown-menu";
 
 export async function UserNav() {
-	const userData = await getCachedData(
-		async () => await api.common.getData(),
-		["user-nav-data-fetch"],
-	);
+	const userData = await getData(api.common.getUserData);
 
 	return (
 		<DropdownMenu>
@@ -29,7 +26,7 @@ export async function UserNav() {
 							alt="@shadcn"
 						/>
 						<AvatarFallback>
-							{userData.name.slice(0, 2).toUpperCase()}
+							{userData?.name.slice(0, 2).toUpperCase()}
 						</AvatarFallback>
 					</Avatar>
 				</Button>
@@ -37,9 +34,9 @@ export async function UserNav() {
 			<DropdownMenuContent className="w-56" align="end" forceMount>
 				<DropdownMenuLabel className="font-normal">
 					<div className="flex flex-col space-y-1">
-						<p className="text-sm font-medium leading-none">{userData.name}</p>
+						<p className="text-sm font-medium leading-none">{userData?.name}</p>
 						<p className="text-xs leading-none text-muted-foreground">
-							{userData.email}
+							{userData?.email}
 						</p>
 					</div>
 				</DropdownMenuLabel>

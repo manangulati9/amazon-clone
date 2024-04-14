@@ -22,10 +22,9 @@ import { Button } from "@/ui/button";
 import { toast } from "sonner";
 import { Toast } from "@/ui/toast";
 import { type User } from "@prisma/client";
-import { Label } from "@/ui/label";
 
-export function ProfileForm({ initialData }: { initialData: User }) {
-	const { data, refetch } = api.common.getData.useQuery(undefined, {
+export function ProfileForm({ initialData }: { initialData: User | null }) {
+	const { data, refetch } = api.common.getUserData.useQuery(undefined, {
 		initialData,
 		refetchOnMount: false,
 		refetchOnReconnect: false,
@@ -34,14 +33,14 @@ export function ProfileForm({ initialData }: { initialData: User }) {
 	const form = useForm<TProfileForm>({
 		resolver: zodResolver(profileFormSchema),
 		defaultValues: {
-			email: data.email,
-			name: data.name,
-			image: data.image ?? "",
+			email: data?.email ?? "",
+			name: data?.name ?? "",
+			image: data?.image ?? "",
 		},
 	});
 
 	const didChange = form.formState.isDirty;
-	const avatarURL = data.image;
+	const avatarURL = data?.image;
 
 	const { mutate: updateName, isPending: isUpdating } =
 		api.customer.updateName.useMutation({

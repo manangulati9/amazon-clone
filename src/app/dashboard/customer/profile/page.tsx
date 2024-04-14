@@ -4,7 +4,7 @@ import { getData } from "@/lib/get-item";
 import { api } from "@/trpc/server";
 
 export default async function Page() {
-	const initialData = await getData(api.common.getData);
+	const initialData = await getData(api.common.getUserData);
 
 	return (
 		<div className="space-y-6">
