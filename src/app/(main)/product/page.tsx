@@ -39,18 +39,18 @@ export default async function Page({
 					<hr className="my-2.5 border bg-slate-500" />
 					<div>
 						<p className="my-2 text-lg sm:text-xl md:text-2xl">
-							₹{productData.price.toFixed(2)}
+							₹{productData.price.toLocaleString()}
 						</p>
 						<div className="flex space-x-2 text-sm sm:text-base md:text-lg text-slate-600">
 							<span>M.R.P -</span>
 							<p className="line-through">
-								₹{(productData.price + 1000).toFixed(2)}
+								₹{(productData.price + 1000).toLocaleString()}
 							</p>
 						</div>
 						<p className="text-xs sm:text-sm">Inclusive of all taxes</p>
 						<p className="text-xs sm:text-sm">
-							EMI starts at ₹{(productData.price / 6).toFixed(2)}. No Cost EMI
-							available
+							EMI starts at ₹{(productData.price / 6).toLocaleString()}. No Cost
+							EMI available
 						</p>
 					</div>
 					<hr className="my-2.5 border bg-slate-500" />

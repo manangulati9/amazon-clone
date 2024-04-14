@@ -21,16 +21,19 @@ model Product {
   updatedAt   DateTime        @updatedAt
   createdBy   User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
+  Order       Order[]
 }
 
 model Order {
   id          String          @id @default(cuid())
   name        String
   category    ProductCategory
-  price       Float
+  value       Float
   quantity    Int
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+  product     Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId   String?
   createdBy   User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
 }

@@ -38,6 +38,7 @@ export function Navbar({ user }: { user: User | null }) {
 	const [query, setQuery] = useState("");
 	const isSignedIn = !!user;
 	const popover_index = user ? user.type : "CUSTOMER";
+	const [categorySelect, setCategorySelect] = useState("");
 
 	const handleSearch = (e: FormEvent) => {
 		e.preventDefault();
@@ -45,6 +46,8 @@ export function Navbar({ user }: { user: User | null }) {
 
 		const searchParams = new URLSearchParams();
 		searchParams.append("query", query);
+
+		if (categorySelect) searchParams.append("category", categorySelect);
 
 		const redirectURL = `${baseURL}/search?` + searchParams.toString();
 
@@ -124,7 +127,7 @@ export function Navbar({ user }: { user: User | null }) {
 					onSubmit={handleSearch}
 					className="flex flex-grow w-full h-10 rounded text-foreground lg:w-fit"
 				>
-					<Select>
+					<Select value={categorySelect} onValueChange={setCategorySelect}>
 						<SelectTrigger className="bg-background/80 text-xs text-nowrap focus-visible:ring-offset-0 w-fit border-r border-muted/10 rounded-r-none [&>span]:line-clamp-none">
 							<SelectValue placeholder="All" />
 						</SelectTrigger>

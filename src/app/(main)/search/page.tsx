@@ -7,6 +7,8 @@ import { notFound } from "next/navigation";
 import { Card, CardContent } from "@ui/card";
 import { getDay, getMonth } from "@/lib/utils";
 import { getData } from "@/lib/get-item";
+import { z } from "zod";
+import { ProductCategory } from "@prisma/client";
 
 export default async function Page({
 	searchParams,
@@ -15,12 +17,13 @@ export default async function Page({
 	searchParams: Record<string, string | undefined>;
 }) {
 	const query = searchParams.query;
+	const category = searchParams.category;
 
-	if (!query) {
+	if (!query && !category) {
 		notFound();
 	}
 
-	const products = await getData(() => api.customer.searchProduct(query));
+	const products = await getProducts(query, category);
 
 	if (!products) {
 		notFound();
@@ -58,7 +61,7 @@ export default async function Page({
 								</div>
 								<div className="flex gap-1 items-center">
 									<p className="text-base font-semibold sm:text-lg md:text-xl">
-										₹{item.price.toFixed()}
+										₹{item.price.toLocaleString()}
 									</p>
 									<p className="text-xs text-gray-600 line-through">
 										₹{item.price + 1000}
@@ -85,4 +88,57 @@ export default async function Page({
 			))}
 		</main>
 	);
+}
+
+async function getProducts(
+	query: string | undefined,
+	category: string | undefined,
+) {
+	const parseCategories = () => {
+		const categorySchema = z.nativeEnum(ProductCategory);
+
+		const categories = category!
+			.split(" ")
+			.map((cat) => {
+				const parseResult = categorySchema.safeParse(cat);
+
+				if (!parseResult.success) {
+					console.error("Parse error: ", parseResult.error);
+					return null;
+				}
+
+				return parseResult.data;
+			})
+			.filter((cat) => cat !== null);
+
+		return categories as ProductCategory[];
+	};
+
+	const queries = query ? query.split(" ") : null;
+
+	const categories = category ? parseCategories() : null;
+
+	if (queries && categories) {
+		const products = await getData(() =>
+			api.customer.searchProducts({
+				queries: queries,
+				categories: categories,
+			}),
+		);
+
+		return products;
+	}
+
+	if (queries) {
+		const products = await getData(() =>
+			api.customer.searchProductByQuery(queries),
+		);
+		return products;
+	}
+
+	const products = await getData(() =>
+		api.customer.searchProductByCategory(categories!),
+	);
+
+	return products;
 }

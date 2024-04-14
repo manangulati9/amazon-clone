@@ -60,12 +60,12 @@ export const columns: ColumnDef<Order>[] = [
 		},
 	},
 	{
-		accessorKey: "price",
+		accessorKey: "value",
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Price" />
+			<DataTableColumnHeader column={column} title="Order value" />
 		),
 		cell: ({ row }) => {
-			return <span>₹ {row.getValue("price")}</span>;
+			return <span>₹ {row.getValue("value")}</span>;
 		},
 	},
 	{
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Order>[] = [
 			<DataTableColumnHeader column={column} title="Quantity" />
 		),
 		cell: ({ row }) => {
-			return <span>₹ {row.getValue("quantity")}</span>;
+			return <span>{row.getValue("quantity")}</span>;
 		},
 	},
 	{

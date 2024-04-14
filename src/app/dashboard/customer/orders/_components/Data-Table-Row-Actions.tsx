@@ -22,11 +22,11 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
 	row,
 }: DataTableRowActionsProps<TData>) {
-	const { mutate: cancelOrder } = api.customer.cancelOrder.useMutation({
+	const { mutate: deleteOrder } = api.customer.deleteOrder.useMutation({
 		onSuccess: () => {
 			void revalidate("/dashboard/customer/orders");
 			toast.success(
-				<Toast opts={{ variant: "success", title: "Order cancelled!" }} />,
+				<Toast opts={{ variant: "success", title: "Order deleted!" }} />,
 			);
 		},
 		onError: () => {
@@ -54,8 +54,8 @@ export function DataTableRowActions<TData>({
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[160px]">
-				<DropdownMenuItem onClick={() => cancelOrder(row.getValue("id"))}>
-					Cancel
+				<DropdownMenuItem onClick={() => deleteOrder(row.getValue("id"))}>
+					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

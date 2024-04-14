@@ -1,4 +1,5 @@
 "use client";
+
 import {
 	Select,
 	SelectContent,
@@ -13,11 +14,20 @@ import { type ProductData, useStore } from "@/lib/StoreProvider";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTimer } from "react-timer-hook";
+import { api } from "@/trpc/react";
+import type { api as serverApi } from "@/trpc/server";
+import { toast } from "sonner";
+import { Toast } from "@/ui/toast";
+
+type TProductData = NonNullable<
+	Awaited<ReturnType<typeof serverApi.customer.getProductById>>
+>;
 
 export function ActionBox({
 	productData,
 }: {
-	productData: ProductData;
+	productData: TProductData;
 }) {
 	const today = new Date().getDate();
 	const monNum = new Date().getMonth();
@@ -31,6 +41,19 @@ export function ActionBox({
 	const handleCartAdd = () => {
 		if (!isSignedIn) {
 			router.push("/auth/login");
+			return;
+		}
+
+		if (!quantity) {
+			toast.error(
+				<Toast
+					opts={{
+						variant: "error",
+						title: "Invalid quantity!",
+						description: "Please select quantity from the dropdown.",
+					}}
+				/>,
+			);
 			return;
 		}
 
@@ -49,13 +72,54 @@ export function ActionBox({
 		setIsProdInCart(true);
 	};
 
+	const { mutate: buyProduct, isPending } = api.customer.buyProduct.useMutation(
+		{
+			onSuccess: () => {
+				toast.success(
+					<Toast
+						opts={{ variant: "success", title: "Purchase successfull!" }}
+					/>,
+				);
+			},
+
+			onError: (error) => {
+				console.error(error);
+				toast.error(
+					<Toast
+						opts={{
+							variant: "error",
+							title: "Something went wrong!",
+							description: "Please try again later.",
+						}}
+					/>,
+				);
+			},
+		},
+	);
+
 	const handleBuyNow = () => {
 		if (!isSignedIn) {
 			router.push("/auth/login");
 			return;
 		}
 
-		alert("Thank you for your purchase!");
+		if (!quantity) {
+			toast.error(
+				<Toast
+					opts={{
+						variant: "error",
+						title: "Invalid quantity!",
+						description: "Please select quantity from the dropdown.",
+					}}
+				/>,
+			);
+			return;
+		}
+
+		buyProduct({
+			product: productData,
+			quantity: parseInt(quantity),
+		});
 	};
 
 	useEffect(() => {
@@ -79,17 +143,19 @@ export function ActionBox({
 	return (
 		<Card className="px-4 text-sm">
 			<CardHeader>
-				<CardTitle className="text-lg text-blue-500">FREE DELIVERY</CardTitle>
+				<CardTitle className="text-xl text-blue-500">FREE DELIVERY</CardTitle>
 				<div className="text-muted-foreground">
 					<p>
 						Get it by {getDay(((today + 2) % 7) - 1)}, {today + 2}{" "}
 						{getMonth(monNum)}
 					</p>
-					<p className="text-foreground/80">
-						Or fastest delivery Tomorrow, {getMonth(monNum)} {today + 1}.
-						<br />
-						Order within 3 hrs 47 mins.
-					</p>
+					<div className="space-y-4 text-foreground">
+						<p>
+							Or fastest delivery Tomorrow, {getMonth(monNum)} {today + 1} with
+							prime
+						</p>
+						<Timer />
+					</div>
 				</div>
 			</CardHeader>
 			<CardContent className="space-y-2">
@@ -119,10 +185,28 @@ export function ActionBox({
 				<Button
 					className="w-full bg-orange-400 rounded-full hover:bg-orange-500"
 					onClick={handleBuyNow}
+					disabled={isPending}
 				>
-					Buy now
+					{isPending ? "Purchasing..." : "Buy now"}
 				</Button>
 			</CardFooter>
 		</Card>
+	);
+}
+
+function Timer() {
+	const { seconds, minutes, hours } = useTimer({
+		expiryTimestamp: new Date(new Date().getTime() + 3 * 60 * 60 * 1000),
+	});
+
+	return (
+		<p className="text-lg">
+			<span>
+				Order within <br />
+			</span>
+			<span className="font-bold">
+				{hours} hrs {minutes} mins {seconds} secs
+			</span>
+		</p>
 	);
 }

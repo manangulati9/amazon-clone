@@ -1,4 +1,4 @@
-import { ProductCategory } from "@prisma/client";
+import { type ProductCategory } from "@prisma/client";
 
 export type TItemDetails = {
 	name?: string;
@@ -15,12 +15,12 @@ export type TCardItem = {
 
 export const CARD_GROUP: TCardItem[] = [
 	{
-		title: "Deals in PCs",
+		title: "Deals on computers and laptops",
 		items: [
 			{
-				category: [ProductCategory.Computer],
+				category: ["Computer"],
 				image: "/assets/home/gaming_pc.webp",
-				href: "/search?query=gaming+pc",
+				href: "/search?category=Computer",
 			},
 		],
 	},
@@ -29,27 +29,27 @@ export const CARD_GROUP: TCardItem[] = [
 		items: [
 			{
 				name: "Dining",
-				category: [ProductCategory.Kitchen],
+				category: ["Kitchen"],
 				image: "/assets/home/dining.jpg",
-				href: "/search?query=dining",
+				href: "/search?category=Dining",
 			},
 			{
 				name: "Home",
-				category: [ProductCategory.Home],
+				category: ["Home"],
 				image: "/assets/home/home.jpg",
-				href: "/search?query=home",
+				href: "/search?category=Home",
 			},
 			{
 				name: "Kitchen",
-				category: [ProductCategory.Kitchen],
+				category: ["Kitchen"],
 				image: "/assets/home/kitchen.webp",
-				href: "/search?query=kitchen",
+				href: "/search?category=Kitchen",
 			},
 			{
 				name: "Health & Beauty",
-				category: [ProductCategory.Health, ProductCategory.Beauty],
+				category: ["Health", "Beauty"],
 				image: "/assets/home/health&beauty.jpg",
-				href: "/search?query=health+beauty",
+				href: "/search?category=Health+Beauty",
 			},
 		],
 	},
@@ -58,9 +58,9 @@ export const CARD_GROUP: TCardItem[] = [
 		items: [
 			{
 				name: "iPhone 12",
-				category: [ProductCategory.Mobile],
+				category: ["Mobile"],
 				image: "/assets/home/iphone-12.webp",
-				href: `/search?query=iphone+12+${ProductCategory.Mobile}`,
+				href: "/search?query=iphone+12&category=Mobile",
 				object_fit: "object-contain",
 			},
 		],
@@ -70,27 +70,27 @@ export const CARD_GROUP: TCardItem[] = [
 		items: [
 			{
 				name: "Gaming Consoles",
-				category: [ProductCategory.Video_Game],
+				category: ["Video_Game"],
 				image: "/assets/home/consoles.jpg",
-				href: "/search?query=consoles",
+				href: "/search?category=Video_Game",
 			},
 			{
 				name: "Smart TVs",
-				category: [ProductCategory.TV],
+				category: ["TV"],
 				image: "/assets/home/tv.jpg",
-				href: "/search?query=tv",
+				href: "/search?category=TV",
 			},
 			{
 				name: "Headphones",
-				category: [ProductCategory.Electronic],
+				category: ["Music"],
 				image: "/assets/home/headphones.avif",
-				href: "/search?query=headphones",
+				href: "/search?category=Music",
 			},
 			{
 				name: "TWS",
-				category: [ProductCategory.Music],
+				category: ["Music"],
 				image: "/assets/home/headsets.png",
-				href: "/search?query=headsets",
+				href: "/search?category=Music",
 				object_fit: "object-contain",
 			},
 		],
@@ -100,27 +100,27 @@ export const CARD_GROUP: TCardItem[] = [
 		items: [
 			{
 				name: "Bestseller Novel",
-				category: [ProductCategory.Book],
+				category: ["Book"],
 				image: "/assets/home/bestseller.webp",
-				href: `/search?query=bestseller+${ProductCategory.Book}`,
+				href: "/search?query=bestseller&category=Book",
 			},
 			{
 				name: "Mystery Thriller",
-				category: [ProductCategory.Book],
+				category: ["Book"],
 				image: "/assets/home/mystery_thriller.jpg",
-				href: `/search?query=mystery+thriller+${ProductCategory.Book}`,
+				href: "/search?query=mystery+thriller&category=Book",
 			},
 			{
 				name: "Romantic Comedy",
-				category: [ProductCategory.Book],
+				category: ["Book"],
 				image: "/assets/home/romantic_comedy.jpg",
-				href: `/search?query=romantic+comedy+${ProductCategory.Book}`,
+				href: "/search?query=romantic+comedy&category=Book",
 			},
 			{
 				name: "Sci-Fi Fantasy",
-				category: [ProductCategory.Book],
+				category: ["Book"],
 				image: "/assets/home/sci_fi.png",
-				href: `/search?query=sci+fi+${ProductCategory.Book}`,
+				href: "/search?query=sci+fi&category=Book",
 			},
 		],
 	},

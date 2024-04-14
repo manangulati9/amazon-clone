@@ -13,7 +13,7 @@ import {
 
 export type ProductData = Product & {
 	seller: string | undefined;
-	quantity?: string;
+	quantity: string;
 };
 
 type StoreFields = {
