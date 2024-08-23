@@ -26,6 +26,12 @@ This is an innovative e-commerce web application clone of Amazon.com built to pr
 - Tailwind CSS: A utility-first CSS framework for building custom designs with ease.
 - shadcn/ui: A library of customizable UI components for React applications, offering a modern and responsive UI design.
 
+## App structure
+
+<p align="center">
+  <img src="./public/app_structure.png" alt="logo" height="650">
+</p>
+
 ## Installation
 
 To run app locally, follow these steps:
